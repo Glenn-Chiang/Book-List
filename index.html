@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8" />
     <title>Bibliofile</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/library.css">
     <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
-
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
     <header>
         <h1>
-            Bibliofile
+            Bookwyrm
         </h1>
+        <h2>
+            For the Voracious Reader
+        </h2>
     </header>
     <nav>
         <ul>
@@ -33,5 +38,43 @@
         </ul>
     </nav>
     
+    <main>
+        <section class="add-book">
+            <h1>
+                Add a Book to your Library
+            </h1>
+        
+            <button class="add-book">
+                <i class="fa fa-plus"></i>
+            </button>
+            <form class="add-book">
+                <label for="title">
+                    Title
+                </label>
+                <input type="text" id="title" name="title" required>
+                
+                <label for="author">
+                    Author
+                </label>
+                <input type="text" id="author" name="author" required>
+
+                <label for="date-read">
+                    Date read
+                </label>
+                <input type="date" id="date-read" name="date-read">
+
+
+            </form>
+            
+        </section>
+    
+        <section class="display-books">
+            <h1>
+                My Library
+            </h1>
+        </section>
+    </main>
+    
+    <script src="index.js"></script>
 </body>
 </html>

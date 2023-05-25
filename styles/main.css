@@ -1,10 +1,12 @@
-body {
+body, button {
     font-family: montserrat;
 }
 
 header {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
 
@@ -15,7 +17,7 @@ nav ul {
     
     border-radius: 20px;
     text-align: center;
-    background-color: lightseagreen;
+    background-color: #1ca9c9;
     list-style-type: none;
     color: white;
 }
@@ -27,7 +29,7 @@ nav ul li {
 }
 
 nav ul li:hover{
-    background-color: darkturquoise;
+    background-color: #0093AF;
 }
 
 nav ul li:first-child{
@@ -36,4 +38,13 @@ nav ul li:first-child{
 
 nav ul li:last-child{
     border-radius: 0 20px 20px 0;
+}
+
+
+main {
+    text-align: center;
+}
+
+button {
+    font-size: large;
 }
