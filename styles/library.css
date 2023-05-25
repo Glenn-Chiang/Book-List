@@ -4,13 +4,16 @@ main {
     gap: 40px;
 }
 
-
 button.add-book {
     border: none;
     border-radius: 10px;
     background-color: #1ca9c9;
     padding: 10px 20px;
     color: white;
+}
+
+button.add-book.hide {
+    display: none;
 }
 
 button.add-book:hover {
@@ -20,9 +23,42 @@ button.add-book:hover {
 
 form.add-book {
     display: none;
+
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
 }
 
 form.add-book.show {
     display: flex;
-    gap: 10px;
+}
+
+form.add-book input {
+    border: 2px solid #1ca9c9;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+form.add-book button {
+    border-radius: 10px;
+    border: none;
+    color: white;
+    padding: 10px;
+}
+
+form.add-book button[type='submit'] {
+    background-color: lightseagreen;
+}
+
+form.add-book button[type='submit']:hover {
+    background-color: darkturquoise;
+}
+
+form.add-book button.cancel {
+    background-color: crimson;
+}
+
+form.add-book button.cancel:hover {
+    background-color: lightcoral;
 }
