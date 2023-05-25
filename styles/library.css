@@ -34,11 +34,17 @@ form.add-book.show {
     display: flex;
 }
 
-form.add-book input {
+form.add-book input, form.add-book select {
     border: 2px solid #1ca9c9;
     border-radius: 10px;
     padding: 10px;
+    font-family: montserrat;
 }
+
+
+/* form.add-book div.add-or-cancel {
+
+} */
 
 form.add-book button {
     border-radius: 10px;
@@ -47,11 +53,11 @@ form.add-book button {
     padding: 10px;
 }
 
-form.add-book button[type='submit'] {
+form.add-book button.submit {
     background-color: lightseagreen;
 }
 
-form.add-book button[type='submit']:hover {
+form.add-book button.submit:hover {
     background-color: darkturquoise;
 }
 

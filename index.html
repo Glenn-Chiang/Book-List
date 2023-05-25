@@ -41,7 +41,7 @@
     <main>
         <section class="add-book">
             <h1>
-                Add a Book to your Library
+                Add a Book to my Library
             </h1>
         
             <button class="add-book">
@@ -58,17 +58,35 @@
                 </label>
                 <input type="text" id="author" name="author" required>
 
+                <label for="rating">
+                    Rating
+                </label>
+                <select id="rating" name="rating">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+
                 <label for="date-read">
                     Date read
                 </label>
                 <input type="date" id="date-read" name="date-read">
 
-                <button type="submit">
-                    Add book
-                </button>
-                <button class="cancel">
-                    Cancel
-                </button>
+                <div class="add-or-cancel">
+                    <button class="submit">
+                        Add book
+                    </button>
+                    <button class="cancel">
+                        Cancel
+                    </button>
+                </div>
             </form>
             
         </section>
