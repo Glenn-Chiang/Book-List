@@ -68,3 +68,16 @@ form.add-book button.cancel {
 form.add-book button.cancel:hover {
     background-color: lightcoral;
 }
+
+
+table.library {
+    table-layout: fixed;
+    border-collapse: collapse;
+    border: 2px solid #1ca9c9;
+}
+
+table.library th {
+    width: 25%;
+    background-color: #1ca9c9;
+    color: white;
+}

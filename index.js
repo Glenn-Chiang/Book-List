@@ -32,7 +32,7 @@ const library = {
             console.log(book);
         })
     }
-}
+};
 
 
 submitAddBook.addEventListener('click', () => {
