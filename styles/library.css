@@ -24,14 +24,24 @@ button.add-book:hover {
 form.add-book {
     display: none;
 
+    margin: 20px;
+    flex-direction: column;
     gap: 20px;
     justify-content: center;
     align-items: center;
     padding: 40px;
+    border: 2px solid #1ca9c9;
+    border-radius: 10px;
 }
 
 form.add-book.show {
     display: flex;
+}
+
+form.add-book .form-fields {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 form.add-book input, form.add-book select {
@@ -41,10 +51,16 @@ form.add-book input, form.add-book select {
     font-family: montserrat;
 }
 
+form.add-book fieldset.status {
+    border: 2px solid #1ca9c9;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
 
-/* form.add-book div.add-or-cancel {
+}
 
-} */
 
 form.add-book button {
     border-radius: 10px;
@@ -70,6 +86,13 @@ form.add-book button.cancel:hover {
 }
 
 
+section.library {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 20px;
+}
+
 table.library {
     table-layout: fixed;
     border-collapse: collapse;
@@ -77,7 +100,26 @@ table.library {
 }
 
 table.library th {
-    width: 25%;
     background-color: #1ca9c9;
     color: white;
+}
+
+table.library th, td {
+    padding: 10px;
+}
+
+table.library thead th.title {
+    width: 40%;
+}
+
+table.library thead th.author {
+    width: 25%;
+}
+
+table.library thead th.rating {
+    width: 15%;
+}
+
+table.library thead th.date-read {
+    width: 20%;
 }

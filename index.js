@@ -3,9 +3,16 @@ const addBookForm = document.querySelector('form.add-book');
 const submitAddBook = document.querySelector("form.add-book button.submit")
 const cancelAddBook = document.querySelector("form.add-book button.cancel")
 
+const titleField = document.getElementById('title');
+const authorField = document.getElementById('author');
+const ratingField = document.getElementById('rating');
+const dateReadField = document.getElementById('date-read');
+
+
 addBookBtn.addEventListener('click', () => {
     addBookForm.classList.add('show');
     addBookBtn.classList.add('hide');
+    titleField.focus();
 })
 
 cancelAddBook.addEventListener('click', () => {
@@ -36,11 +43,6 @@ const library = {
 
 
 submitAddBook.addEventListener('click', () => {
-    const titleField = document.getElementById('title');
-    const authorField = document.getElementById('author');
-    const ratingField = document.getElementById('rating');
-    const dateReadField = document.getElementById('date-read');
-    
     const title = titleField.value;
     const author = authorField.value;
     const rating = ratingField.value;

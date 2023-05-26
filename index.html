@@ -48,36 +48,66 @@
                 <i class="fa fa-plus"></i>
             </button>
             <form class="add-book">
-                <label for="title">
-                    Title
-                </label>
-                <input type="text" id="title" name="title" required>
-                
-                <label for="author">
-                    Author
-                </label>
-                <input type="text" id="author" name="author" required>
-
-                <label for="rating">
-                    Rating
-                </label>
-                <select id="rating" name="rating">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                </select>
-
-                <label for="date-read">
-                    Date read
-                </label>
-                <input type="date" id="date-read" name="date-read">
+                <div class="form-fields">
+                    <div>
+                        <label for="title">
+                            Title
+                        </label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div>
+                        <label for="author">
+                            Author
+                        </label>
+                        <input type="text" id="author" name="author" required>
+                    </div>
+                    <div>
+                        <label for="rating">
+                            Rating
+                        </label>
+                        <select id="rating" name="rating">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="date-read">
+                            Date read
+                        </label>
+                        <input type="date" id="date-read" name="date-read">
+                    </div>
+                    <fieldset class="status">
+                        <legend class="status">
+                            Status
+                        </legend>
+                        <div>
+                            <input type="radio" id="read" value="read" name="status">
+                            <label for="read">
+                                Read
+                            </label>
+                        </div>
+                        <div>
+                            <input type="radio" id="reading" value="reading" name="status">
+                            <label for="reading">
+                                Reading
+                            </label>
+                        </div>
+                        <div>
+                            <input type="radio" id="to-read" value="to-read" name="status">
+                            <label for="to-read">
+                                To-Read
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
 
                 <div class="add-or-cancel">
                     <button class="submit">
@@ -96,21 +126,27 @@
                 My Library
             </h1>
             <table class="library">
-                <tr>
-                    <th>
-                        Title
-                    </th>
-                    <th>
-                        Author
-                    </th>
-                    <th>
-                        Rating
-                    </th>
-                    <th>
-                        Date Read
-                    </th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th class="title">
+                            Title
+                        </th>
+                        <th class="author">
+                            Author
+                        </th>
+                        <th class="rating">
+                            Rating
+                        </th>
+                        <th class="date-read">
+                            Date Read
+                        </th>
+                    </tr>
+                </thead>
+
             </table>
+            <div class="library-stats">
+                <p>Number of books: </p>
+            </div>
         </section>
     </main>
     
