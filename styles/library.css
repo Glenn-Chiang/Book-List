@@ -118,11 +118,11 @@ table.library th, td {
 }
 
 table.library thead th.title {
-    width: 40%;
+    width: 35%;
 }
 
 table.library thead th.author {
-    width: 25%;
+    width: 30%;
 }
 
 table.library thead th.rating {
