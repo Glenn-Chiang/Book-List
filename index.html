@@ -58,12 +58,14 @@
                     <div>
                         <label for="author">
                             Author
+                            <i class="fa fa-user"></i>
                         </label>
                         <input type="text" id="author" name="author" required>
                     </div>
                     <div>
                         <label for="rating">
                             Rating
+                            <i class="fa fa-star"></i>
                         </label>
                         <select id="rating" name="rating">
                             <option value="1">1</option>
@@ -81,6 +83,7 @@
                     <div>
                         <label for="date-read">
                             Date read
+                            <i class="fa fa-calendar-check-o"></i>
                         </label>
                         <input type="date" id="date-read" name="date-read">
                     </div>
@@ -92,26 +95,29 @@
                             <input type="radio" id="read" value="read" name="status">
                             <label for="read">
                                 Read
+                                <i class="fa fa-check-circle"></i>
                             </label>
                         </div>
                         <div>
                             <input type="radio" id="reading" value="reading" name="status">
                             <label for="reading">
                                 Reading
+                                <i class="fa fa-bookmark"></i>
                             </label>
                         </div>
                         <div>
                             <input type="radio" id="to-read" value="to-read" name="status">
                             <label for="to-read">
                                 To-Read
+                                <i class="fa fa-calendar-plus-o"></i>
                             </label>
                         </div>
                     </fieldset>
                 </div>
 
-                <div class="add-or-cancel">
+                <div class="submit-or-cancel">
                     <button class="submit">
-                        Add book
+                        Add
                     </button>
                     <button class="cancel">
                         Cancel
@@ -132,14 +138,21 @@
                             Title
                         </th>
                         <th class="author">
+                            <i class="fa fa-user"></i>
                             Author
                         </th>
                         <th class="rating">
+                            <i class="fa fa-star"></i>
                             Rating
                         </th>
                         <th class="date-read">
+                            <i class="fa fa-calendar-check-o"></i>
                             Date Read
                         </th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
                     </tr>
                 </thead>
 

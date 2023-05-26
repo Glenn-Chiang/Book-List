@@ -1,3 +1,7 @@
+body, input, select {
+    color: #0093AF;
+}
+
 main {
     display: flex;
     flex-direction: column;
@@ -58,7 +62,6 @@ form.add-book fieldset.status {
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
-
 }
 
 
@@ -67,6 +70,10 @@ form.add-book button {
     border: none;
     color: white;
     padding: 10px;
+}
+
+form.add-book button.submit, form.add-book button.cancel {
+    width: 80px;
 }
 
 form.add-book button.submit {
@@ -95,8 +102,10 @@ section.library {
 
 table.library {
     table-layout: fixed;
-    border-collapse: collapse;
+    /* border-collapse: collapse; */
+    border-spacing: 0;
     border: 2px solid #1ca9c9;
+    border-radius: 10px;
 }
 
 table.library th {
