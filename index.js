@@ -30,52 +30,41 @@ function Book(title, author, rating, dateRead) {
     return { title, author, rating, dateRead, fullTitle };
 }
 
-// Library object
+// Initialize empty books array in local storage 
+if (localStorage.getItem('books') === null) {
+    const books = [];
+    localStorage.setItem('books', JSON.stringify(books));    
+}
 
-const books = [];
 const libraryTable = document.querySelector('table.library tbody');
 
 function addBook(book) {
+    const books = JSON.parse(localStorage.getItem('books'));
     books.push(book);
+    localStorage.setItem('books', JSON.stringify(books));
 }
 
 function renderTable() {
+    const books = JSON.parse(localStorage.getItem('books'));
+
+    if (books.length === 0) {
+        return;
+    }
+
     libraryTable.innerHTML = '';
     books.forEach(book => {
         const bookEntry = `<tr>
-                          <td>${book.title}</td>
-                             <td>${book.author}</td>
-                             <td>${book.rating}</td>
-                             <td>${book.dateRead}</td>
-                             </tr>`;
+                            <td>${book.title}</td>
+                            <td>${book.author}</td>
+                            <td>${book.rating}</td>
+                            <td>${book.dateRead}</td>
+                            <td><button class="edit">Edit</button></td>
+                            </tr>`;
         libraryTable.innerHTML += bookEntry;
     }); 
 }
 
-
-// const library = {
-//     books: [],
-//     libraryTable: document.querySelector('table.library tbody'),
-
-//     addBook: function (book) {
-//         this.books.push(book);
-//     },
-    
-//     renderTable: function () {
-//         this.books.forEach(book => {
-//             const bookEntry = `<tr>
-//                             <td>${book.title}</td>
-//                             <td>${book.author}</td>
-//                             <td>${book.rating}</td>
-//                             <td>${book.dateRead}</td>
-//                             </tr>`;
-//             this.libraryTable.innerHTML += bookEntry;
-//         })
-//     }
-// };
-
-// library.renderTable();
-
+renderTable();
 
 submitAddBook.addEventListener('click', () => {
     const title = titleField.value;
