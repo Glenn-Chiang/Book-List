@@ -46,26 +46,29 @@ function addBook(book) {
 
 function renderTable() {
     const books = JSON.parse(localStorage.getItem('books'));
-
+    
     if (books.length === 0) {
         return;
     }
 
     libraryTable.innerHTML = '';
     books.forEach(book => {
-        const bookEntry = `<tr>
-                            <td>${book.title}</td>
-                            <td>${book.author}</td>
-                            <td>${book.rating}</td>
-                            <td>${book.dateRead}</td>
-                            <td><button class="edit">Edit</button></td>
-                            </tr>`;
-        libraryTable.innerHTML += bookEntry;
+        const bookEntry = document.querySelector('template.book-entry').content.cloneNode(true);
+        
+        bookEntry.querySelector('td.title').textContent = book.title;
+        bookEntry.querySelector('td.author').textContent = book.author;
+        bookEntry.querySelector('td.rating').textContent = book.rating;
+        bookEntry.querySelector('td.date-read').textContent = book.dateRead;
+        
+        libraryTable.appendChild(bookEntry);
     }); 
 }
 
-renderTable();
+document.addEventListener('DOMContentLoaded', () => {
+    renderTable();
+})
 
+// Add book
 submitAddBook.addEventListener('click', () => {
     const title = titleField.value;
     const author = authorField.value;
@@ -75,4 +78,45 @@ submitAddBook.addEventListener('click', () => {
     const book = Book(title, author, rating, dateRead);
     addBook(book);
     renderTable();
+})
+
+// Edit book
+const editButtons = document.querySelectorAll('button.edit');
+editButtons.forEach((editButton, index) => {
+    editButton.addEventListener('click', () => {
+        const books = JSON.parse(localStorage.getItem('books'));
+        const targetBook = books[index];
+
+        const editForm = document.querySelector('form.edit-book');
+        editForm.classList.toggle('show');
+
+        const titleField = editForm.getElementById('edit-title')
+        const authorField = editForm.getElementsById('edit-author')
+        const ratingField = editForm.getElementById('edit-rating');
+        const currentRatingOption = editForm.querySelector(`option[value="${targetBook.rating}"]`)
+        const dateField = editForm.getElementById('edit-date-read')
+
+        // Pre-fill in each form field with current data of book
+        titleField.value = targetBook.title;
+        authorField.value = targetBook.author;
+        currentRatingOption.setAttribute('selected', 'selected');
+        dateField.value = targetBook.dateRead;
+
+        const saveBtn = editForm.querySelector('button.save');
+        const removeBtn = editForm.querySelector('button.remove');
+        const cancelBtn = editForm.querySelector('button.cancel');
+
+        // Save changes
+        saveBtn.addEventListener('click', () => {
+            targetBook.title = titleField.value;
+            targetBook.author = authorField.value;
+            targetBook.rating = ratingField.value;
+            targetBook.dateRead = dateField.value;
+        })
+
+        // Remove book
+        removeBtn.addEventListener('click', () => {
+            books.splice(index, 1);
+        })
+    })
 })

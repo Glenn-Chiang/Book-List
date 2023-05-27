@@ -149,3 +149,14 @@ table.library button.edit {
 table.library button.edit:hover {
     background-color: #0093AF;
 }
+
+
+/* Edit form */
+form.edit-book {
+    display: none;
+}
+
+form.edit-book.show {
+    display: flex;
+    position: absolute;
+}
