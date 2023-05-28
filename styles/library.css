@@ -80,11 +80,11 @@ form.add-book button {
     padding: 10px;
 }
 
-form.add-book button.submit, form.add-book button.cancel {
+form.add-book button[type='submit'], form.add-book button.cancel {
     width: 80px;
 }
 
-form.add-book button.submit {
+form.add-book button[type='submit'] {
     background-color: lightseagreen;
 }
 
@@ -247,4 +247,23 @@ form.edit-book fieldset {
 
 form.edit-book > div.buttons {
     display: block;
+}
+
+
+div.table-nav {
+    margin: 20px;
+}
+
+div.table-nav button {
+    background-color: #0093AF;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    width: 40px;
+    padding: 10px;
+    transition: 0.2s;
+}
+
+div.table-nav button:hover {
+    background-color: #1ca9c9;
 }
