@@ -178,25 +178,29 @@ library.table.addEventListener('click', event => {
 })
 
 
-const prevBtn = document.querySelector('div.table-nav button.prev');
-const nextBtn = document.querySelector('div.table-nav button.next');
+const prevBtns = document.querySelectorAll('div.table-nav button.prev');
+const nextBtns = document.querySelectorAll('div.table-nav button.next');
 
-nextBtn.addEventListener('click', () => {
-    if (library.shelfNum === library.numShelves - 1) { // Cannot go to next shelf if already at last shelf
-        return;
-    }
+nextBtns.forEach(nextBtn => {
+    nextBtn.addEventListener('click', () => {
+        if (library.shelfNum === library.numShelves - 1) { // Cannot go to next shelf if already at last shelf
+            return;
+        }
+    
+        const books = JSON.parse(localStorage.getItem('books'));
+        library.shelfNum += 1;
+        library.renderTable();
+    })    
+}) 
 
-    const books = JSON.parse(localStorage.getItem('books'));
-    library.shelfNum += 1;
-    library.renderTable();
-})
-
-prevBtn.addEventListener('click', () => {
-    if (library.shelfNum === 0) { // Cannot go to previous shelf if already at first shelf
-        return;
-    }
-
-    const books = JSON.parse(localStorage.getItem('books'));
-    library.shelfNum -= 1;
-    library.renderTable();
+prevBtns.forEach(prevBtn => {
+    prevBtn.addEventListener('click', () => {
+        if (library.shelfNum === 0) { // Cannot go to previous shelf if already at first shelf
+            return;
+        }
+    
+        const books = JSON.parse(localStorage.getItem('books'));
+        library.shelfNum -= 1;
+        library.renderTable();
+    })    
 })
