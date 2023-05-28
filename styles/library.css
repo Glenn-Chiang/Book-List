@@ -50,7 +50,14 @@ form.add-book .form-fields {
     gap: 20px;
 }
 
-form.add-book input, form.add-book select {
+form.add-book .form-fields > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+form.add-book input, form.add-book select, 
+form.edit-book input, form.edit-book select {
     border: 2px solid #1ca9c9;
     border-radius: 10px;
     padding: 10px;
@@ -131,16 +138,22 @@ table.library thead th.author {
 }
 
 table.library thead th.rating {
-    width: 10%;
+    width: 5%;
 }
 
 table.library thead th.date-read {
-    width: 15%;
+    width: 20%;
 }
 
 table.library thead th.edit {
     width: 10%;
 }
+
+
+table.library tbody td.rating {
+    text-align: end;
+}
+
 
 table.library button.edit {
     background-color: #1ca9c9;
@@ -176,7 +189,7 @@ form.edit-book {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    /* align-items: flex-start; */
     margin: auto;
     padding: 20px;
     gap: 10px;
@@ -216,4 +229,22 @@ form.edit-book button.cancel {
 
 form.edit-book button.cancel:hover {
     background-color: lightcoral;
+}
+
+form.edit-book > div {
+    display: flex;
+    justify-content: space-between;
+}
+
+form.edit-book fieldset {
+    border: 2px solid #1ca9c9;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+form.edit-book > div.buttons {
+    display: block;
 }

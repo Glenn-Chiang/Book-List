@@ -93,7 +93,7 @@
                             Status
                         </legend>
                         <div>
-                            <input type="radio" id="read" value="read" name="status">
+                            <input type="radio" id="read" value="read" name="status" required>
                             <label for="read">
                                 Read
                                 <i class="fa fa-check-circle"></i>
@@ -117,7 +117,7 @@
                 </div>
 
                 <div class="submit-or-cancel">
-                    <button type="button" class="submit">
+                    <button type="submit" class="submit">
                         Add
                     </button>
                     <button type="button" class="cancel">
@@ -202,6 +202,7 @@
                             <i class="fa fa-star"></i>
                         </label>
                         <select id="edit-rating" name="rating">
+                            <option value="-">-</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>

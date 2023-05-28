@@ -70,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 // Add book
-submitAddBook.addEventListener('click', () => {
+addBookForm.addEventListener('submit', event => {
+    event.preventDefault();
     const title = titleField.value;
     const author = authorField.value;
     const rating = ratingField.value;
@@ -79,7 +80,27 @@ submitAddBook.addEventListener('click', () => {
     const book = Book(title, author, rating, dateRead);
     addBook(book);
     renderTable();
+
+    addBookForm.classList.remove('show');
+    addBookBtn.classList.remove('hide');
+    // Clear fields
+    addBookForm.reset();
 })
+// submitAddBook.addEventListener('click', () => {
+//     const title = titleField.value;
+//     const author = authorField.value;
+//     const rating = ratingField.value;
+//     const dateRead = dateReadField.value;
+
+//     const book = Book(title, author, rating, dateRead);
+//     addBook(book);
+//     renderTable();
+
+//     addBookForm.classList.remove('show');
+//     addBookBtn.classList.remove('hide');
+//     // Clear fields
+//     addBookForm.reset();
+// })
 
 // Edit book entry 
 // Use event delegation to bind event listener to table instead of binding directly to edit buttons 
@@ -133,10 +154,11 @@ libraryTable.addEventListener('click', event => {
         books.splice(index, 1);
         localStorage.setItem('books', JSON.stringify(books));
         renderTable();
-
+        console.log(books);
         editModal.classList.remove('show');
     })
 
+    // Cancel edit
     cancelBtn.addEventListener('click', () => {
         editModal.classList.remove('show');
     })
