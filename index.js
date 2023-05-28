@@ -52,12 +52,13 @@ function renderTable() {
     }
 
     libraryTable.innerHTML = '';
-    books.forEach(book => {
+    books.forEach((book, index) => {
         const bookEntry = document.querySelector('template.book-entry').content.cloneNode(true);
         
+        bookEntry.querySelector('td.index').textContent = index + 1;
         bookEntry.querySelector('td.title').textContent = book.title;
         bookEntry.querySelector('td.author').textContent = book.author;
-        bookEntry.querySelector('td.rating').textContent = book.rating;
+        bookEntry.querySelector('td.rating span.rating').textContent = book.rating;
         bookEntry.querySelector('td.date-read').textContent = book.dateRead;
         
         libraryTable.appendChild(bookEntry);
@@ -80,7 +81,57 @@ submitAddBook.addEventListener('click', () => {
     renderTable();
 })
 
-// Edit book
+// Edit book entry 
+// Use event delegation to bind event listener to table instead of binding directly to edit buttons 
+libraryTable.addEventListener('click', event => {
+    if (event.target.tagName !== 'BUTTON' || !event.target.classList.contains('edit')) {
+        return;
+    }
+    // The following code will only run if clicked element is an edit-book button
+
+    const tableRow = event.target.parentElement.parentElement;
+    console.log(tableRow);
+    const index = tableRow.querySelector('td.index').textContent;
+    const books = JSON.parse(localStorage.getItem('books'));
+    const targetBook = books[index - 1];
+
+    const editForm = document.querySelector('form.edit-book');
+    editForm.classList.toggle('show');
+
+    const titleField = document.getElementById('edit-title')
+    const authorField = document.getElementById('edit-author')
+    const ratingField = document.getElementById('edit-rating');
+    const currentRatingOption = editForm.querySelector(`option[value="${targetBook.rating}"]`)
+    const dateField = document.getElementById('edit-date-read')
+
+    // Pre-fill in each form field with current data of book
+    titleField.value = targetBook.title;
+    authorField.value = targetBook.author;
+    currentRatingOption.setAttribute('selected', 'selected');
+    dateField.value = targetBook.dateRead;
+
+    const saveBtn = editForm.querySelector('button.save');
+    const removeBtn = editForm.querySelector('button.remove');
+    const cancelBtn = editForm.querySelector('button.cancel');
+
+    // Save changes
+    saveBtn.addEventListener('click', () => {
+        targetBook.title = titleField.value;
+        targetBook.author = authorField.value;
+        targetBook.rating = ratingField.value;
+        targetBook.dateRead = dateField.value;
+
+        renderTable();
+    })
+
+    // Remove book
+    removeBtn.addEventListener('click', () => {
+        books.splice(index, 1);
+        renderTable();
+    })
+})
+
+
 const editButtons = document.querySelectorAll('button.edit');
 editButtons.forEach((editButton, index) => {
     editButton.addEventListener('click', () => {
@@ -112,11 +163,19 @@ editButtons.forEach((editButton, index) => {
             targetBook.author = authorField.value;
             targetBook.rating = ratingField.value;
             targetBook.dateRead = dateField.value;
+
+            renderTable();
         })
 
         // Remove book
         removeBtn.addEventListener('click', () => {
             books.splice(index, 1);
+            renderTable();
+        })
+
+        // Cancel edit
+        cancelBtn.addEventListener('cancel', () => {
+            editForm.classList.toggle('show');
         })
     })
 })

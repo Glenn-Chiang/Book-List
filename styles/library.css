@@ -1,5 +1,7 @@
 body, input, select {
     color: #0093AF;
+    font-family: montserrat;
+    font-size: medium;
 }
 
 main {
@@ -52,7 +54,6 @@ form.add-book input, form.add-book select {
     border: 2px solid #1ca9c9;
     border-radius: 10px;
     padding: 10px;
-    font-family: montserrat;
 }
 
 form.add-book fieldset.status {
@@ -117,8 +118,12 @@ table.library th, td {
     padding: 10px;
 }
 
+table.library thead th.index {
+    width: 5%;
+}
+
 table.library thead th.title {
-    width: 35%;
+    width: 30%;
 }
 
 table.library thead th.author {
@@ -158,5 +163,5 @@ form.edit-book {
 
 form.edit-book.show {
     display: flex;
-    position: absolute;
+    /* position: absolute; */
 }
