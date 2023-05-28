@@ -52,10 +52,17 @@ const library = new function () {
                 : Math.floor(books.length / this.shelfSize) + 1;
     })();
 
+    this.bookCapacity = this.shelfSize * this.numShelves;
+
     this.addBook = book => {
         const books = JSON.parse(localStorage.getItem('books'));
         books.push(book);
         localStorage.setItem('books', JSON.stringify(books));
+
+        if (books.length > this.bookCapacity) {
+            this.shelfNum += 1;
+            this.numShelves += 1;
+        }
     };
 
     this.renderTable = () => {
@@ -81,7 +88,7 @@ const library = new function () {
 
             this.table.appendChild(bookEntry);
         });
-    }
+    };
 }
 
 document.addEventListener('DOMContentLoaded', () => {
