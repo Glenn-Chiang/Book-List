@@ -94,8 +94,9 @@ libraryTable.addEventListener('click', event => {
     const books = JSON.parse(localStorage.getItem('books'));
     const targetBook = books[index];
 
+    const editModal = document.querySelector('div.edit-book');
     const editForm = document.querySelector('form.edit-book');
-    editForm.classList.toggle('show');
+    editModal.classList.add('show');
 
     const titleField = document.getElementById('edit-title')
     const authorField = document.getElementById('edit-author')
@@ -124,7 +125,7 @@ libraryTable.addEventListener('click', event => {
         localStorage.setItem('books', JSON.stringify(books));
         renderTable();
 
-        editForm.classList.toggle('show');
+        editModal.classList.remove('show');
     })
 
     // Remove book
@@ -133,11 +134,11 @@ libraryTable.addEventListener('click', event => {
         localStorage.setItem('books', JSON.stringify(books));
         renderTable();
 
-        editForm.classList.toggle('show');
+        editModal.classList.remove('show');
     })
 
     cancelBtn.addEventListener('click', () => {
-        editForm.classList.toggle('show');
+        editModal.classList.remove('show');
     })
 })
 

@@ -179,86 +179,89 @@
 
             </table>
 
-            <!-- Form for editing a book in the library -->
-            <form class="edit-book">
-                <div>
-                    <label for="edit-title">
-                        Title
-                    </label>
-                    <input type="text" id="edit-title" name="title" required>
-                </div>
-                <div>
-                    <label for="edit-author">
-                        Author
-                        <i class="fa fa-user"></i>
-                    </label>
-                    <input type="text" id="edit-author" name="author" required>
-                </div>
-                <div>
-                    <label for="edit-rating">
-                        Rating
-                        <i class="fa fa-star"></i>
-                    </label>
-                    <select id="edit-rating" name="rating">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="edit-date-read">
-                        Date read
-                        <i class="fa fa-calendar-check-o"></i>
-                    </label>
-                    <input type="date" id="edit-date-read" name="date-read">
-                </div>
-                <fieldset class="status">
-                    <legend class="status">
-                        Status
-                    </legend>
+            <!-- Edit-book form modal -->
+            <div class="edit-book">
+                <form class="edit-book">
+                    <h1>Edit Book</h1>
                     <div>
-                        <input type="radio" id="edit-read" value="read" name="status">
-                        <label for="edit-read">
-                            Read
-                            <i class="fa fa-check-circle"></i>
+                        <label for="edit-title">
+                            Title
                         </label>
+                        <input type="text" id="edit-title" name="title" required>
                     </div>
                     <div>
-                        <input type="radio" id="edit-reading" value="reading" name="status">
-                        <label for="edit-reading">
-                            Reading
-                            <i class="fa fa-bookmark"></i>
+                        <label for="edit-author">
+                            Author
+                            <i class="fa fa-user"></i>
                         </label>
+                        <input type="text" id="edit-author" name="author" required>
                     </div>
                     <div>
-                        <input type="radio" id="edit-to-read" value="to-read" name="status">
-                        <label for="edit-to-read">
-                            To-Read
-                            <i class="fa fa-calendar-plus-o"></i>
+                        <label for="edit-rating">
+                            Rating
+                            <i class="fa fa-star"></i>
                         </label>
+                        <select id="edit-rating" name="rating">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
                     </div>
-                </fieldset>
-
-                <div class="buttons">
-                    <button type="button" class="save">
-                        Save changes
-                    </button>
-                    <button type="button" class="remove">
-                        Remove book
-                    </button>
-                    <button type="button" class="cancel">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-
+                    <div>
+                        <label for="edit-date-read">
+                            Date read
+                            <i class="fa fa-calendar-check-o"></i>
+                        </label>
+                        <input type="date" id="edit-date-read" name="date-read">
+                    </div>
+                    <fieldset class="status">
+                        <legend class="status">
+                            Status
+                        </legend>
+                        <div>
+                            <input type="radio" id="edit-read" value="read" name="status">
+                            <label for="edit-read">
+                                Read
+                                <i class="fa fa-check-circle"></i>
+                            </label>
+                        </div>
+                        <div>
+                            <input type="radio" id="edit-reading" value="reading" name="status">
+                            <label for="edit-reading">
+                                Reading
+                                <i class="fa fa-bookmark"></i>
+                            </label>
+                        </div>
+                        <div>
+                            <input type="radio" id="edit-to-read" value="to-read" name="status">
+                            <label for="edit-to-read">
+                                To-Read
+                                <i class="fa fa-calendar-plus-o"></i>
+                            </label>
+                        </div>
+                    </fieldset>
+    
+                    <div class="buttons">
+                        <button type="button" class="save">
+                            Save changes
+                        </button>
+                        <button type="button" class="remove">
+                            Remove book
+                        </button>
+                        <button type="button" class="cancel">
+                            Cancel
+                        </button>
+                    </div>
+                </form>    
+            </div>
+            
             <div class="library-stats">
                 <p>Number of books: </p>
             </div>
