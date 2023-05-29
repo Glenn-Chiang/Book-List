@@ -49,7 +49,7 @@ const library = new function () {
     };
 
     // Display latest shelf when page is first loaded
-    this.shelfNum = this.numShelves() - 1;
+    this.shelfNum = 0;
 
     this.bookCapacity = this.shelfSize * this.numShelves;
 
@@ -287,8 +287,8 @@ cancelBtn.addEventListener('click', () => {
 
 
 // Navigation between table pages/shelves
-const prevBtns = document.querySelectorAll('div.table-nav button.prev');
-const nextBtns = document.querySelectorAll('div.table-nav button.next');
+const prevBtns = document.querySelectorAll('div.table-controls button.prev');
+const nextBtns = document.querySelectorAll('div.table-controls button.next');
 
 nextBtns.forEach(nextBtn => {
     nextBtn.addEventListener('click', () => {

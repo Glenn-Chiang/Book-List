@@ -101,7 +101,16 @@ form.add-book button.cancel:hover {
 }
 
 
-section.library, section.library-stats {
+section.library {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    margin: 20px;
+}
+
+
+section.library-stats {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -256,20 +265,31 @@ form.edit-book > div.buttons {
 }
 
 
-div.table-nav {
+div.table-controls {
     margin: 20px;
+    display: flex;
+    justify-content: center;
 }
 
-div.table-nav button {
+div.table-controls div.filter, div.table-controls div.empty {
+    flex: 1;
+}
+
+div.filter {
+    text-align: left;
+}
+
+div.table-controls button {
     background-color: #1ca9c9;
     border: none;
     border-radius: 10px;
     color: white;
     width: 40px;
     padding: 10px;
+
     transition: 0.2s;
 }
 
-div.table-nav button:hover {
+div.table-controls button:hover {
     background-color: #0093AF;
 }
