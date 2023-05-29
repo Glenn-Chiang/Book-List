@@ -63,6 +63,7 @@ const library = new function () {
 
     this.removeBook = index => {
         const books = JSON.parse(localStorage.getItem('books'));
+        console.log(index, books[index]);
         books.splice(index, 1);
         localStorage.setItem('books', JSON.stringify(books));
 
@@ -189,7 +190,14 @@ addBookForm.addEventListener('submit', event => {
     addBookForm.reset();
 })
 
-// Edit book entry 
+// Editing books
+const editModal = document.querySelector('div.edit-book');
+const editForm = document.querySelector('form.edit-book');
+
+const saveBtn = editForm.querySelector('button.save');
+const removeBtn = editForm.querySelector('button.remove');
+const cancelBtn = editForm.querySelector('button.cancel');
+
 // Use event delegation to bind event listener to table instead of binding directly to edit buttons 
 library.table.addEventListener('click', event => {
     if (event.target.tagName !== 'BUTTON' || !event.target.classList.contains('edit')) {
@@ -197,13 +205,12 @@ library.table.addEventListener('click', event => {
     }
     // The following code will only run if clicked element is an edit-book button
 
+    const books = JSON.parse(localStorage.getItem('books'));
+
     const tableRow = event.target.parentElement.parentElement;
     const index = Number(tableRow.querySelector('td.index').textContent) - 1;
-    const books = JSON.parse(localStorage.getItem('books'));
     const targetBook = books[index];
 
-    const editModal = document.querySelector('div.edit-book');
-    const editForm = document.querySelector('form.edit-book');
     editModal.classList.add('show');
 
     const titleField = document.getElementById('edit-title');
@@ -224,45 +231,58 @@ library.table.addEventListener('click', event => {
 
     dateField.value = targetBook.dateRead;
     currentStatus.checked = true;
+
+    // Bind the index of the target book to the edit-form and the remove button 
+    // This allows the respective event listener callback functions to identify the target book
+    editForm['data-index'] = index;
+    removeBtn['data-index'] = index;
+})
+
+
+// Save edit
+editForm.addEventListener('submit', event => {
+    event.preventDefault(); // Prevent page refresh
+
+    index = event.target['data-index']; // Identify which book to edit
+    const books = JSON.parse(localStorage.getItem('books'));
+    targetBook = books[index];
+
+    const titleField = document.getElementById('edit-title');
+    const authorField = document.getElementById('edit-author');
+    const ratingField = document.getElementById('edit-rating');
+    const dateField = document.getElementById('edit-date-read');
+
+    targetBook.title = titleField.value;
+    targetBook.author = authorField.value;
     
-    const saveBtn = editForm.querySelector('button.save');
-    const removeBtn = editForm.querySelector('button.remove');
-    const cancelBtn = editForm.querySelector('button.cancel');
+    if (ratingField.value === '-') {
+        targetBook.rating = null;
+    } else {
+        targetBook.rating = Number(ratingField.value);
+    }
 
-    // Save changes
-    saveBtn.addEventListener('click', () => {
-        targetBook.title = titleField.value;
-        targetBook.author = authorField.value;
-        
-        if (ratingField.value === '-') {
-            targetBook.rating = null;
-        } else {
-            targetBook.rating = Number(ratingField.value);
-        }
+    targetBook.dateRead = dateField.value;
+    targetBook.status = editForm.querySelector(`input[name="status"]:checked`).value;
 
-        targetBook.dateRead = dateField.value;
-        targetBook.status = editForm.querySelector(`input[name="status"]:checked`).value;
+    books[index] = targetBook;
 
-        books[index] = targetBook;
+    localStorage.setItem('books', JSON.stringify(books));
+    library.renderTable();
+    library.updateStats();
+    editModal.classList.remove('show');
+})    
 
-        localStorage.setItem('books', JSON.stringify(books));
-        library.renderTable();
-        library.updateStats();
-        editModal.classList.remove('show');
-    })
+// Remove book
+removeBtn.addEventListener('click', event => { 
+    library.removeBook(event.target['data-index']);
+    library.renderTable();
+    library.updateStats();
+    editModal.classList.remove('show');
+})
 
-    // Remove book
-    removeBtn.addEventListener('click', () => {
-        library.removeBook(index);
-        library.renderTable();
-        library.updateStats();
-        editModal.classList.remove('show');
-    })
-
-    // Cancel edit
-    cancelBtn.addEventListener('click', () => {
-        editModal.classList.remove('show');
-    })
+// Cancel edit
+cancelBtn.addEventListener('click', () => {
+    editModal.classList.remove('show');
 })
 
 
