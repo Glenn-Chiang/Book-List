@@ -25,9 +25,8 @@ cancelAddBook.addEventListener('click', () => {
 
 
 // Book object factory function
-function Book(title, author, rating, dateRead) {
-    const fullTitle = `'${title}' by ${author}`;
-    return { title, author, rating, dateRead, fullTitle };
+function Book(title, author, rating, dateRead, status) {
+    return { title, author, rating, dateRead, status };
 }
 
 // Initialize empty books array in local storage 
@@ -40,7 +39,6 @@ if (localStorage.getItem('books') === null) {
 const library = new function () {
     this.table = document.querySelector('table.library tbody');
 
-    this.shelfNum = 0;
     this.shelfSize = 10; // Number of books displayed per table page
     
     this.numShelves = () => {
@@ -52,6 +50,9 @@ const library = new function () {
                 : Math.floor(books.length / this.shelfSize) + 1;
     };
 
+    // Display latest shelf when page is first loaded
+    this.shelfNum = this.numShelves() - 1;
+
     this.bookCapacity = this.shelfSize * this.numShelves;
 
     this.addBook = book => {
@@ -59,9 +60,7 @@ const library = new function () {
         books.push(book);
         localStorage.setItem('books', JSON.stringify(books));
 
-        if (books.length > this.bookCapacity) {
-            this.shelfNum += 1;
-        }
+
     };
 
     this.renderTable = () => {
@@ -90,13 +89,36 @@ const library = new function () {
     };
 
     this.updateStats = () => {
+        const allBooks = JSON.parse(localStorage.getItem('books'));
         
+        const booksRead = allBooks.filter(book => {
+            return book.status === 'read';
+        });
+
+        const booksReading = allBooks.filter(book => {
+            return book.status === 'reading';
+        });
+
+        const booksToRead = allBooks.filter(book => {
+            return book.status === 'to-read';
+        });
+
+        const numTotal = allBooks.length;
+        const numRead = booksRead.length;
+        const numReading = booksReading.length;
+        const numToRead = booksToRead.length;
+
+        document.querySelector('table.library-stats tr.total-books td').textContent = numTotal;
+        document.querySelector('table.library-stats tr.books-read td').textContent = numRead;
+        document.querySelector('table.library-stats tr.books-reading td').textContent = numReading;
+        document.querySelector('table.library-stats tr.books-to-read td').textContent = numToRead;
     };
 }
 
 
 document.addEventListener('DOMContentLoaded', () => {
     library.renderTable();
+    library.updateStats();
 })
 
 // Add book
@@ -107,10 +129,12 @@ addBookForm.addEventListener('submit', event => {
     const author = authorField.value;
     const rating = ratingField.value;
     const dateRead = dateReadField.value;
+    const status = document.querySelector('input[name="status"]:checked').value;
 
-    const book = Book(title, author, rating, dateRead);
+    const book = Book(title, author, rating, dateRead, status);
     library.addBook(book);
     library.renderTable();
+    library.updateStats();
 
     addBookForm.classList.remove('show');
     addBookBtn.classList.remove('hide');
@@ -136,17 +160,19 @@ library.table.addEventListener('click', event => {
     const editForm = document.querySelector('form.edit-book');
     editModal.classList.add('show');
 
-    const titleField = document.getElementById('edit-title')
-    const authorField = document.getElementById('edit-author')
+    const titleField = document.getElementById('edit-title');
+    const authorField = document.getElementById('edit-author');
     const ratingField = document.getElementById('edit-rating');
-    const currentRatingOption = editForm.querySelector(`option[value="${targetBook.rating}"]`)
-    const dateField = document.getElementById('edit-date-read')
+    const currentRatingOption = editForm.querySelector(`option[value="${targetBook.rating}"]`);
+    const dateField = document.getElementById('edit-date-read');
+    const currentStatus = editForm.querySelector(`input[name="status"][value="${targetBook.status}"]`)
 
-    // Pre-fill in each form field with current data of book
+    // Pre-fill each form field with current data of book
     titleField.value = targetBook.title;
     authorField.value = targetBook.author;
     currentRatingOption.setAttribute('selected', 'selected');
     dateField.value = targetBook.dateRead;
+    currentStatus.setAttribute('checked', 'checked');
 
     const saveBtn = editForm.querySelector('button.save');
     const removeBtn = editForm.querySelector('button.remove');
@@ -158,11 +184,13 @@ library.table.addEventListener('click', event => {
         targetBook.author = authorField.value;
         targetBook.rating = ratingField.value;
         targetBook.dateRead = dateField.value;
+        targetBook.status = editForm.querySelector(`input[name="status"]:checked`).value;
 
         books[index] = targetBook;
 
         localStorage.setItem('books', JSON.stringify(books));
         library.renderTable();
+        library.updateStats();
         editModal.classList.remove('show');
     })
 
@@ -172,6 +200,7 @@ library.table.addEventListener('click', event => {
 
         localStorage.setItem('books', JSON.stringify(books));
         library.renderTable();
+        library.updateStats();
         editModal.classList.remove('show');
     })
 
