@@ -60,8 +60,16 @@ const library = new function () {
         books.push(book);
         localStorage.setItem('books', JSON.stringify(books));
 
-
+        this.shelfNum = this.numShelves() - 1; // Go to shelf where book is added
     };
+
+    this.removeBook = index => {
+        const books = JSON.parse(localStorage.getItem('books'));
+        books.splice(index, 1);
+        localStorage.setItem('books', JSON.stringify(books));
+
+        this.shelfNum = this.numShelves() - 1;
+    }
 
     this.renderTable = () => {
         const books = JSON.parse(localStorage.getItem('books'));
@@ -196,9 +204,7 @@ library.table.addEventListener('click', event => {
 
     // Remove book
     removeBtn.addEventListener('click', () => {
-        books.splice(index, 1);
-
-        localStorage.setItem('books', JSON.stringify(books));
+        library.removeBook(index);
         library.renderTable();
         library.updateStats();
         editModal.classList.remove('show');
