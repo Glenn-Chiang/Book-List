@@ -26,6 +26,12 @@ cancelAddBook.addEventListener('click', () => {
 
 // Book object factory function
 function Book(title, author, rating, dateRead, status) {
+    if (rating === '-') {
+        rating = null;
+    } else {
+        rating = Number(rating);
+    }
+
     return { title, author, rating, dateRead, status };
 }
 
@@ -89,11 +95,34 @@ const library = new function () {
             bookEntry.querySelector('td.index').textContent = index + this.shelfNum * this.shelfSize + 1;
             bookEntry.querySelector('td.title').textContent = book.title;
             bookEntry.querySelector('td.author').textContent = book.author;
-            bookEntry.querySelector('td.rating span.rating').textContent = book.rating;
+            
+            if (!book.rating) {
+                bookEntry.querySelector('td.rating span.rating').textContent = "-";
+            } else {
+                bookEntry.querySelector('td.rating span.rating').textContent = book.rating;
+            }
+
             bookEntry.querySelector('td.date-read').textContent = book.dateRead;
 
             this.table.appendChild(bookEntry);
         });
+    };
+
+    this.calcAverageRating = () => {
+        const allBooks = JSON.parse(localStorage.getItem('books'));
+        let numRatedBooks = 0;
+
+        // Sum up all ratings
+        const ratingSum = allBooks.reduce((sum, book) => {
+            if (book.rating) {
+                numRatedBooks += 1;
+                return sum += book.rating;
+            } else {
+                return sum;
+            }
+        }, 0);
+
+        return (Math.round((ratingSum / numRatedBooks) * 10) / 10).toFixed(1); // 1 decimal place
     };
 
     this.updateStats = () => {
@@ -120,6 +149,8 @@ const library = new function () {
         document.querySelector('table.library-stats tr.books-read td').textContent = numRead;
         document.querySelector('table.library-stats tr.books-reading td').textContent = numReading;
         document.querySelector('table.library-stats tr.books-to-read td').textContent = numToRead;
+
+        document.querySelector('table.library-stats tr.average-rating td').textContent = this.calcAverageRating();
     };
 }
 
