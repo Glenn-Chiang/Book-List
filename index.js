@@ -3,17 +3,11 @@ const addBookForm = document.querySelector('form.add-book');
 const submitAddBook = document.querySelector("form.add-book button.submit")
 const cancelAddBook = document.querySelector("form.add-book button.cancel")
 
-// Add-book form fields
-const titleField = document.getElementById('title');
-const authorField = document.getElementById('author');
-const ratingField = document.getElementById('rating');
-const dateReadField = document.getElementById('date-read');
-
 
 addBookBtn.addEventListener('click', () => {
     addBookForm.classList.add('show');
     addBookBtn.classList.add('hide');
-    titleField.focus();
+    document.getElementById('title').focus();
 })
 
 cancelAddBook.addEventListener('click', () => {
@@ -25,13 +19,11 @@ cancelAddBook.addEventListener('click', () => {
 
 
 // Book object factory function
-function Book(title, author, rating, dateRead, status) {
-    if (rating === '-') {
-        rating = null;
-    } else {
-        rating = Number(rating);
+function Book(title, author, ratingString, dateRead, status) {
+    let rating = null;
+    if (ratingString !== '-') {
+        rating = Number(ratingString);
     }
-
     return { title, author, rating, dateRead, status };
 }
 
@@ -114,9 +106,10 @@ const library = new function () {
 
         // Sum up all ratings
         const ratingSum = allBooks.reduce((sum, book) => {
+            console.log(book.rating)
             if (book.rating) {
                 numRatedBooks += 1;
-                return sum += book.rating;
+                return sum += Number(book.rating);
             } else {
                 return sum;
             }
@@ -164,6 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
 addBookForm.addEventListener('submit', event => {
     event.preventDefault(); // Prevent page refresh
 
+    // Add-book form fields
+    const titleField = document.getElementById('title');
+    const authorField = document.getElementById('author');
+    const ratingField = document.getElementById('rating');
+    const dateReadField = document.getElementById('date-read');
+
     const title = titleField.value;
     const author = authorField.value;
     const rating = ratingField.value;
@@ -180,7 +179,6 @@ addBookForm.addEventListener('submit', event => {
     // Clear fields
     addBookForm.reset();
 })
-
 
 // Edit book entry 
 // Use event delegation to bind event listener to table instead of binding directly to edit buttons 
@@ -202,14 +200,19 @@ library.table.addEventListener('click', event => {
     const titleField = document.getElementById('edit-title');
     const authorField = document.getElementById('edit-author');
     const ratingField = document.getElementById('edit-rating');
-    const currentRatingOption = editForm.querySelector(`option[value="${targetBook.rating}"]`);
     const dateField = document.getElementById('edit-date-read');
     const currentStatus = editForm.querySelector(`input[name="status"][value="${targetBook.status}"]`)
 
     // Pre-fill each form field with current data of book
     titleField.value = targetBook.title;
     authorField.value = targetBook.author;
-    currentRatingOption.setAttribute('selected', 'selected');
+
+    if (targetBook.rating) {
+        ratingField.value = targetBook.rating;
+    } else {
+        ratingField.value = "-";
+    }
+
     dateField.value = targetBook.dateRead;
     currentStatus.setAttribute('checked', 'checked');
 
@@ -221,7 +224,13 @@ library.table.addEventListener('click', event => {
     saveBtn.addEventListener('click', () => {
         targetBook.title = titleField.value;
         targetBook.author = authorField.value;
-        targetBook.rating = ratingField.value;
+        
+        if (ratingField.value === '-') {
+            targetBook.rating = null;
+        } else {
+            targetBook.rating = Number(ratingField.value);
+        }
+        
         targetBook.dateRead = dateField.value;
         targetBook.status = editForm.querySelector(`input[name="status"]:checked`).value;
 
