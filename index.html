@@ -134,165 +134,332 @@
                 My Library
             </h1>
 
-            <div class="table-controls">
-                <div class="filter"> 
-                    <button class="filter">
-                        <i class="fa fa-filter"></i>
-                    </button>
-                </div>
-                <div class="nav-buttons">
-                    <button class="prev">
-                        <i class="fa fa-chevron-left"></i>
-                    </button>
-                    <button class="next">
-                        <i class="fa fa-chevron-right"></i>
-                    </button>
-                </div>
-                <div class="empty"></div>
-            </div>
-
-            <table class="library">
-                <thead>
-                    <tr>
-                        <th class="index"></th>
-                        <th class="title">
-                            Title
-                        </th>
-                        <th class="author">
-                            <i class="fa fa-user"></i>
-                            Author
-                        </th>
-                        <th class="rating">
-                            <i class="fa fa-star"></i>
-                            Rating
-                        </th>
-                        <th class="date-read">
-                            <i class="fa fa-calendar-check-o"></i>
-                            Date Read
-                        </th>
-                        <th class="edit">
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="5">
-                            You haven't added any Books to your Library
-                        </td>
-                    </tr>
-                    
-                </tbody>
-                <template class="book-entry">
-                    <tr class="book-entry">
-                        <td class="index"></td>
-                        <td class="title"></td>
-                        <td class="author"></td>
-                        <td class="rating">
-                            <span class="rating"></span>
-                            <i class="fa fa-star"></i>
-                        </td>
-                        <td class="date-read"></td>
-                        <td class="edit"><button class="edit">Edit</button></td>
-                    </tr>
-                </template>
-
-            </table>
-
-            <!-- Edit-book form modal -->
-            <div class="edit-book">
-                <form class="edit-book">
-                    <h1>Edit Book</h1>
-                    <div>
-                        <label for="edit-title">
-                            Title
-                        </label>
-                        <input type="text" id="edit-title" name="title" required>
-                    </div>
-                    <div>
-                        <label for="edit-author">
-                            Author
-                            <i class="fa fa-user"></i>
-                        </label>
-                        <input type="text" id="edit-author" name="author" required>
-                    </div>
-                    <div>
-                        <label for="edit-rating">
-                            Rating
-                            <i class="fa fa-star"></i>
-                        </label>
-                        <select id="edit-rating" name="rating">
-                            <option value="-">-</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="edit-date-read">
-                            Date read
-                            <i class="fa fa-calendar-check-o"></i>
-                        </label>
-                        <input type="date" id="edit-date-read" name="date-read">
-                    </div>
-                    <fieldset class="status">
-                        <legend class="status">
-                            Status
-                        </legend>
-                        <div>
-                            <input type="radio" id="edit-read" value="read" name="status">
-                            <label for="edit-read">
-                                Read
-                                <i class="fa fa-check-circle"></i>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="edit-reading" value="reading" name="status">
-                            <label for="edit-reading">
-                                Reading
-                                <i class="fa fa-bookmark"></i>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="edit-to-read" value="to-read" name="status">
-                            <label for="edit-to-read">
-                                To-Read
-                                <i class="fa fa-calendar-plus-o"></i>
-                            </label>
-                        </div>
-                    </fieldset>
+            <section class="read">
+                <h2>
+                    <i class="fa fa-check-circle"></i>
+                    Read
+                </h2>
     
-                    <div class="buttons">
-                        <button type="submit" class="save">
-                            Save changes
-                        </button>
-                        <button type="button" class="remove">
-                            Remove book
-                        </button>
-                        <button type="button" class="cancel">
-                            Cancel
+                <div class="table-controls">
+                    <div class="filter"> 
+                        <button class="filter">
+                            <i class="fa fa-filter"></i>
                         </button>
                     </div>
-                </form>    
-            </div>
+                    <div class="nav-buttons">
+                        <button class="prev">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="empty"></div>
+                </div>
+    
+                <table class="library">
+                    <thead>
+                        <tr>
+                            <th class="index"></th>
+                            <th class="title">
+                                Title
+                            </th>
+                            <th class="author">
+                                <i class="fa fa-user"></i>
+                                Author
+                            </th>
+                            <th class="rating">
+                                <i class="fa fa-star"></i>
+                                Rating
+                            </th>
+                            <th class="date-read">
+                                <i class="fa fa-calendar-check-o"></i>
+                                Date Read
+                            </th>
+                            <th class="edit">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6">
+                                You haven't marked any books as read
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                    <template class="book-entry">
+                        <tr class="book-entry">
+                            <td class="index"></td>
+                            <td class="title"></td>
+                            <td class="author"></td>
+                            <td class="rating">
+                                <span class="rating"></span>
+                                <i class="fa fa-star"></i>
+                            </td>
+                            <td class="date-read"></td>
+                            <td class="edit"><button class="edit">Edit</button></td>
+                        </tr>
+                    </template>
+                </table>
+    
+                <div class="table-controls">
+                    <div class="nav-buttons">
+                        <button class="prev">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
             
-            <div class="table-controls">
-                <div class="nav-buttons">
-                    <button class="prev">
-                        <i class="fa fa-chevron-left"></i>
+            <section class="reading">
+                <h2>
+                    <i class="fa fa-bookmark"></i>
+                    Currently Reading
+                </h2>
+
+                <div class="table-controls">
+                    <div class="filter"> 
+                        <button class="filter">
+                            <i class="fa fa-filter"></i>
+                        </button>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="prev">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="empty"></div>
+                </div>
+    
+                <table class="library">
+                    <thead>
+                        <tr>
+                            <th class="index"></th>
+                            <th class="title">
+                                Title
+                            </th>
+                            <th class="author">
+                                <i class="fa fa-user"></i>
+                                Author
+                            </th>
+                            <th class="rating">
+                                <i class="fa fa-star"></i>
+                                Rating
+                            </th>
+                            <th class="date-read">
+                                <i class="fa fa-calendar-check-o"></i>
+                                Date Read
+                            </th>
+                            <th class="edit">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6">
+                                You aren't currently reading any books
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                    <template class="book-entry">
+                        <tr class="book-entry">
+                            <td class="index"></td>
+                            <td class="title"></td>
+                            <td class="author"></td>
+                            <td class="rating">
+                                <span class="rating"></span>
+                                <i class="fa fa-star"></i>
+                            </td>
+                            <td class="date-read"></td>
+                            <td class="edit"><button class="edit">Edit</button></td>
+                        </tr>
+                    </template>
+                </table>
+    
+                <div class="table-controls">
+                    <div class="nav-buttons">
+                        <button class="prev">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="to-read">
+                <h2>
+                    Plan to Read
+                </h2>
+
+                <div class="table-controls">
+                    <div class="filter"> 
+                        <button class="filter">
+                            <i class="fa fa-filter"></i>
+                        </button>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="prev">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="empty"></div>
+                </div>
+    
+                <table class="library">
+                    <thead>
+                        <tr>
+                            <th class="index"></th>
+                            <th class="title">
+                                Title
+                            </th>
+                            <th class="author">
+                                <i class="fa fa-user"></i>
+                                Author
+                            </th>
+                            <th class="rating">
+                                <i class="fa fa-star"></i>
+                                Rating
+                            </th>
+                            <th class="date-read">
+                                <i class="fa fa-calendar-check-o"></i>
+                                Date Read
+                            </th>
+                            <th class="edit">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6">
+                                You don't currently have any books you plan to read
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                    <template class="book-entry">
+                        <tr class="book-entry">
+                            <td class="index"></td>
+                            <td class="title"></td>
+                            <td class="author"></td>
+                            <td class="rating">
+                                <span class="rating"></span>
+                                <i class="fa fa-star"></i>
+                            </td>
+                            <td class="date-read"></td>
+                            <td class="edit"><button class="edit">Edit</button></td>
+                        </tr>
+                    </template>
+                </table>
+    
+                <div class="table-controls">
+                    <div class="nav-buttons">
+                        <button class="prev">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Edit-book form modal -->
+        <div class="edit-book">
+            <form class="edit-book">
+                <h1>Edit Book</h1>
+                <div>
+                    <label for="edit-title">
+                        Title
+                    </label>
+                    <input type="text" id="edit-title" name="title" required>
+                </div>
+                <div>
+                    <label for="edit-author">
+                        Author
+                        <i class="fa fa-user"></i>
+                    </label>
+                    <input type="text" id="edit-author" name="author" required>
+                </div>
+                <div>
+                    <label for="edit-rating">
+                        Rating
+                        <i class="fa fa-star"></i>
+                    </label>
+                    <select id="edit-rating" name="rating">
+                        <option value="-">-</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="edit-date-read">
+                        Date read
+                        <i class="fa fa-calendar-check-o"></i>
+                    </label>
+                    <input type="date" id="edit-date-read" name="date-read">
+                </div>
+                <fieldset class="status">
+                    <legend class="status">
+                        Status
+                    </legend>
+                    <div>
+                        <input type="radio" id="edit-read" value="read" name="status">
+                        <label for="edit-read">
+                            Read
+                            <i class="fa fa-check-circle"></i>
+                        </label>
+                    </div>
+                    <div>
+                        <input type="radio" id="edit-reading" value="reading" name="status">
+                        <label for="edit-reading">
+                            Reading
+                            <i class="fa fa-bookmark"></i>
+                        </label>
+                    </div>
+                    <div>
+                        <input type="radio" id="edit-to-read" value="to-read" name="status">
+                        <label for="edit-to-read">
+                            To-Read
+                            <i class="fa fa-calendar-plus-o"></i>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <div class="buttons">
+                    <button type="submit" class="save">
+                        Save changes
                     </button>
-                    <button class="next">
-                        <i class="fa fa-chevron-right"></i>
+                    <button type="button" class="remove">
+                        Remove book
+                    </button>
+                    <button type="button" class="cancel">
+                        Cancel
                     </button>
                 </div>
-            </div>
-        </section>
+            </form>    
+        </div>
 
         <section class="library-stats">
             <h1 class="library-stats">
