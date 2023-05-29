@@ -66,7 +66,11 @@ const library = new function () {
         books.splice(index, 1);
         localStorage.setItem('books', JSON.stringify(books));
 
-        this.shelfNum = this.numShelves() - 1;
+        // If there is only 1 remaining book on the last shelf and we remove it,
+        // go to the previous shelf, which will now become the last shelf
+        if (this.shelfNum === this.numShelves()) {
+            this.shelfNum = this.numShelves() - 1;
+        }
     }
 
     this.renderTable = () => {
@@ -115,6 +119,10 @@ const library = new function () {
             }
         }, 0);
 
+        if (numRatedBooks === 0) { // No books rated
+            return 0;
+        }
+
         return (Math.round((ratingSum / numRatedBooks) * 10) / 10).toFixed(1); // 1 decimal place
     };
 
@@ -143,7 +151,9 @@ const library = new function () {
         document.querySelector('table.library-stats tr.books-reading td').textContent = numReading;
         document.querySelector('table.library-stats tr.books-to-read td').textContent = numToRead;
 
-        document.querySelector('table.library-stats tr.average-rating td').textContent = this.calcAverageRating();
+        const averageRating = this.calcAverageRating();
+        
+        document.querySelector('table.library-stats tr.average-rating td').textContent = averageRating !== 0 ? averageRating : "You haven't rated any books";
     };
 }
 
@@ -230,7 +240,7 @@ library.table.addEventListener('click', event => {
         } else {
             targetBook.rating = Number(ratingField.value);
         }
-        
+
         targetBook.dateRead = dateField.value;
         targetBook.status = editForm.querySelector(`input[name="status"]:checked`).value;
 
