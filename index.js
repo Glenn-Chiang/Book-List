@@ -43,14 +43,14 @@ const library = new function () {
     this.shelfNum = 0;
     this.shelfSize = 10; // Number of books displayed per table page
     
-    this.numShelves = (() => {
+    this.numShelves = () => {
         const books = JSON.parse(localStorage.getItem('books'));
         return books.length % this.shelfSize === 0
                 ? books.length / this.shelfSize
                 : books.length < this.shelfSize
                 ? 1
                 : Math.floor(books.length / this.shelfSize) + 1;
-    })();
+    };
 
     this.bookCapacity = this.shelfSize * this.numShelves;
 
@@ -61,7 +61,6 @@ const library = new function () {
 
         if (books.length > this.bookCapacity) {
             this.shelfNum += 1;
-            this.numShelves += 1;
         }
     };
 
@@ -89,7 +88,12 @@ const library = new function () {
             this.table.appendChild(bookEntry);
         });
     };
+
+    this.updateStats = () => {
+        
+    };
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     library.renderTable();
@@ -178,12 +182,13 @@ library.table.addEventListener('click', event => {
 })
 
 
+// Navigation between table pages/shelves
 const prevBtns = document.querySelectorAll('div.table-nav button.prev');
 const nextBtns = document.querySelectorAll('div.table-nav button.next');
 
 nextBtns.forEach(nextBtn => {
     nextBtn.addEventListener('click', () => {
-        if (library.shelfNum === library.numShelves - 1) { // Cannot go to next shelf if already at last shelf
+        if (library.shelfNum === library.numShelves() - 1) { // Cannot go to next shelf if already at last shelf
             return;
         }
     

@@ -101,14 +101,15 @@ form.add-book button.cancel:hover {
 }
 
 
-section.library {
+section.library, section.library-stats {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     margin: 20px;
 }
 
-table.library {
+table.library, table.library-stats {
     table-layout: fixed;
     /* border-collapse: collapse; */
     border-spacing: 0;
@@ -116,12 +117,17 @@ table.library {
     border-radius: 10px;
 }
 
-table.library th {
+table.library-stats {
+    width: 50%;
+}
+
+table.library th, table.library-stats th {
     background-color: #1ca9c9;
     color: white;
 }
 
-table.library th, td {
+table.library th, td,
+table.library-stats th {
     padding: 10px;
 }
 
@@ -255,7 +261,7 @@ div.table-nav {
 }
 
 div.table-nav button {
-    background-color: #0093AF;
+    background-color: #1ca9c9;
     border: none;
     border-radius: 10px;
     color: white;
@@ -265,5 +271,5 @@ div.table-nav button {
 }
 
 div.table-nav button:hover {
-    background-color: #1ca9c9;
+    background-color: #0093AF;
 }
