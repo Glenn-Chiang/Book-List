@@ -110,7 +110,6 @@ const library = new function () {
 
         // Sum up all ratings
         const ratingSum = allBooks.reduce((sum, book) => {
-            console.log(book.rating)
             if (book.rating) {
                 numRatedBooks += 1;
                 return sum += Number(book.rating);
@@ -199,7 +198,7 @@ library.table.addEventListener('click', event => {
     // The following code will only run if clicked element is an edit-book button
 
     const tableRow = event.target.parentElement.parentElement;
-    const index = tableRow.querySelector('td.index').textContent - 1;
+    const index = Number(tableRow.querySelector('td.index').textContent) - 1;
     const books = JSON.parse(localStorage.getItem('books'));
     const targetBook = books[index];
 
@@ -224,8 +223,8 @@ library.table.addEventListener('click', event => {
     }
 
     dateField.value = targetBook.dateRead;
-    currentStatus.setAttribute('checked', 'checked');
-
+    currentStatus.checked = true;
+    
     const saveBtn = editForm.querySelector('button.save');
     const removeBtn = editForm.querySelector('button.remove');
     const cancelBtn = editForm.querySelector('button.cancel');
