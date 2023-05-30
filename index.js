@@ -27,69 +27,93 @@ function Book(title, author, ratingString, dateRead, status) {
     return { title, author, rating, dateRead, status };
 }
 
-// Initialize empty books array in local storage 
+// Initialize empty bookshelves in local storage 
 if (localStorage.getItem('books') === null) {
-    const books = [];
+    const read = [];
+    const reading = [];
+    const toRead = [];
+
+    const books = { 
+        "read": read,
+        "reading": reading,
+        "to-read": toRead // Remember that json must have double quotes and not single quotes!
+    }
+
     localStorage.setItem('books', JSON.stringify(books));
 }
 
+// Constructor function for read, reading and toRead shelves
+function Bookshelf(shelfStatus) {
+    this.status = shelfStatus;
 
-const library = new function () {
-    this.table = document.querySelector('table.library tbody');
+    this.table = document.querySelector(`section.${this.status} table tbody`);
 
-    this.shelfSize = 10; // Number of books displayed per table page
-    
-    this.numShelves = () => {
-        const books = JSON.parse(localStorage.getItem('books'));
-        return books.length % this.shelfSize === 0
-                ? books.length / this.shelfSize
-                : books.length < this.shelfSize
-                ? 1
-                : Math.floor(books.length / this.shelfSize) + 1;
+    // Get array of book objects from this shelf e.g. all books read, or all books to read
+    this.getBooks = () => {
+        const allBooks = JSON.parse(localStorage.getItem('books'));
+        return allBooks[this.status];
     };
 
-    // Display latest shelf when page is first loaded
-    this.shelfNum = 0;
+    // Update array of book objects for this shelf
+    this.setBooks = books => {
+        const allBooks = JSON.parse(localStorage.getItem('books'));
+        allBooks[this.status] = books;
+        localStorage.setItem('books', JSON.stringify(allBooks)); 
+    }
 
-    this.bookCapacity = this.shelfSize * this.numShelves;
+    this.pageSize = 10; // Number of books displayed per table page
+    
+    this.numPages = () => {
+        const books = this.getBooks();
+
+        return books.length % this.pageSize === 0
+                ? books.length / this.pageSize
+                : books.length < this.pageSize
+                ? 1
+                : Math.floor(books.length / this.pageSize) + 1;
+    };
+
+    // Display first page of table when site is first loaded
+    this.pageNum = 0;
+
+    this.bookCapacity = this.pageSize * this.numPages;
 
     this.addBook = book => {
-        const books = JSON.parse(localStorage.getItem('books'));
+        const books = this.getBooks();
         books.push(book);
-        localStorage.setItem('books', JSON.stringify(books));
-
-        this.shelfNum = this.numShelves() - 1; // Go to shelf where book is added
+        this.setBooks(books);
+        this.pageNum = this.numPages() - 1; // Go to table page where book is added
     };
 
     this.removeBook = index => {
-        const books = JSON.parse(localStorage.getItem('books'));
+        const books = this.getBooks();
+
         console.log(index, books[index]);
         books.splice(index, 1);
         localStorage.setItem('books', JSON.stringify(books));
 
-        // If there is only 1 remaining book on the last shelf and we remove it,
-        // go to the previous shelf, which will now become the last shelf
-        if (this.shelfNum === this.numShelves()) {
-            this.shelfNum = this.numShelves() - 1;
+        // If there is only 1 remaining book on the last page and we remove it,
+        // go to the previous page, which will now become the last page
+        if (this.pageNum === this.numPages()) {
+            this.pageNum = this.numPages() - 1;
         }
     }
 
     this.renderTable = () => {
-        const books = JSON.parse(localStorage.getItem('books'));
-
+        const books = this.getBooks();
         if (books.length === 0) {
             return;
         }
 
         this.table.innerHTML = '';
 
-        const currentBooks = books.slice(this.shelfNum * this.shelfSize,
-            this.shelfNum * this.shelfSize + this.shelfSize);
+        const currentBooks = books.slice(this.pageNum * this.pageSize,
+            this.pageNum * this.pageSize + this.pageSize);
 
         currentBooks.forEach((book, index) => {
             const bookEntry = document.querySelector('template.book-entry').content.cloneNode(true);
 
-            bookEntry.querySelector('td.index').textContent = index + this.shelfNum * this.shelfSize + 1;
+            bookEntry.querySelector('td.index').textContent = index + this.pageNum * this.pageSize + 1;
             bookEntry.querySelector('td.title').textContent = book.title;
             bookEntry.querySelector('td.author').textContent = book.author;
             
@@ -104,9 +128,48 @@ const library = new function () {
             this.table.appendChild(bookEntry);
         });
     };
+}
 
-    this.calcAverageRating = () => {
-        const allBooks = JSON.parse(localStorage.getItem('books'));
+// Library object created via IIFE
+const library = (() => {
+    const readShelf = new Bookshelf('read');
+    const readingShelf = new Bookshelf('reading');
+    const toReadShelf = new Bookshelf('to-read');
+    
+    const addBook = book => {
+        if (book.status === 'read') {
+            // console.log(readShelf)
+            readShelf.addBook(book);
+        } else if (book.status === 'reading') {
+            readingShelf.addBook(book);
+        } else if (book.status === 'to-read') {
+            toReadShelf.addBook(book);
+        }
+    };
+
+    // Update all shelf tables
+    const renderTables = () => {
+        readShelf.renderTable();
+        readingShelf.renderTable();
+        toReadShelf.renderTable();
+    };
+
+    // Update specific shelf table
+    const renderTable = status => {
+        if (status === 'read') {
+            readShelf.renderTable();
+        } else if (status === 'reading') {
+            readingShelf.renderTable();
+        } else if (status === 'to-read') {
+            toReadShelf.renderTable();
+        }
+    }
+
+    // Private method
+    const calcAverageRating = () => {
+        const books = JSON.parse(localStorage.getItem('books'));
+        const allBooks = books['read'].concat(books['reading'], books['to-read']);
+
         let numRatedBooks = 0;
 
         // Sum up all ratings
@@ -126,40 +189,30 @@ const library = new function () {
         return (Math.round((ratingSum / numRatedBooks) * 10) / 10).toFixed(1); // 1 decimal place
     };
 
-    this.updateStats = () => {
-        const allBooks = JSON.parse(localStorage.getItem('books'));
-        
-        const booksRead = allBooks.filter(book => {
-            return book.status === 'read';
-        });
+    const updateStats = () => {
+        const books = JSON.parse(localStorage.getItem('books'));
 
-        const booksReading = allBooks.filter(book => {
-            return book.status === 'reading';
-        });
-
-        const booksToRead = allBooks.filter(book => {
-            return book.status === 'to-read';
-        });
-
-        const numTotal = allBooks.length;
-        const numRead = booksRead.length;
-        const numReading = booksReading.length;
-        const numToRead = booksToRead.length;
+        const numRead = books['read'].length;
+        const numReading = books['reading'].length;
+        const numToRead = books['to-read'].length;
+        const numTotal = numRead + numReading + numToRead;
 
         document.querySelector('table.library-stats tr.total-books td').textContent = numTotal;
         document.querySelector('table.library-stats tr.books-read td').textContent = numRead;
         document.querySelector('table.library-stats tr.books-reading td').textContent = numReading;
         document.querySelector('table.library-stats tr.books-to-read td').textContent = numToRead;
 
-        const averageRating = this.calcAverageRating();
+        const averageRating = calcAverageRating();
         
         document.querySelector('table.library-stats tr.average-rating td').textContent = averageRating !== 0 ? averageRating : "You haven't rated any books";
     };
-}
+
+    return { readShelf, readingShelf, toReadShelf, addBook, renderTable, renderTables, updateStats };
+})();
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    library.renderTable();
+    library.renderTables();
     library.updateStats();
 })
 
@@ -181,7 +234,7 @@ addBookForm.addEventListener('submit', event => {
 
     const book = Book(title, author, rating, dateRead, status);
     library.addBook(book);
-    library.renderTable();
+    library.renderTable(status);
     library.updateStats();
 
     addBookForm.classList.remove('show');
@@ -199,7 +252,7 @@ const removeBtn = editForm.querySelector('button.remove');
 const cancelBtn = editForm.querySelector('button.cancel');
 
 // Use event delegation to bind event listener to table instead of binding directly to edit buttons 
-library.table.addEventListener('click', event => {
+library.readShelf.table.addEventListener('click', event => {
     if (event.target.tagName !== 'BUTTON' || !event.target.classList.contains('edit')) {
         return;
     }
