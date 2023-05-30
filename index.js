@@ -99,7 +99,7 @@ function Bookshelf(shelfStatus) {
     this.renderTable = () => {
         const books = this.getBooks();
         if (books.length === 0) { // Empty table placeholder
-            this.table.innerHTML = "<tr><td colspan='6'>You don't currently have any books you plan to read</td></tr>";
+            this.table.innerHTML = "<tr><td colspan='6'>You aren't currently reading any books</td></tr>";
             return;
         }
 
@@ -329,12 +329,23 @@ editForm.addEventListener('submit', event => {
     }
 
     targetBook.dateRead = dateField.value;
-    targetBook.status = editForm.querySelector(`input[name="status"]:checked`).value;
 
-    books[index] = targetBook;
+    const newStatus = editForm.querySelector(`input[name="status"]:checked`).value;
+    if (targetBook.status !== newStatus) { // If status is changed, move book to new shelf
+        // Add book to new shelf
+        targetBook.status = newStatus;
+        library[newStatus].addBook(targetBook);
+        library[newStatus].renderTable();
+        // Remove book from current shelf
+        shelf.removeBook(index);
+        shelf.renderTable();
 
-    shelf.setBooks(books);
-    shelf.renderTable();
+    } else {
+        books[index] = targetBook; // if status is unchanged, book remains in current shelf
+        shelf.setBooks(books);
+        shelf.renderTable();
+    }
+
     library.updateStats();
     editModal.classList.remove('show');
 })
