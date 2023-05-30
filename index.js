@@ -44,74 +44,101 @@ if (localStorage.getItem('books') === null) {
 
 // Constructor function for read, reading and toRead shelves
 function Bookshelf(shelfStatus) {
-    this.status = shelfStatus;
+    const status = shelfStatus;
 
-    this.table = document.querySelector(`section.${this.status} table tbody`);
+    const table = document.querySelector(`section.${status} table tbody`);
+    
+    const prevBtns = document.querySelectorAll(`section.${status} button.prev`);
+    const nextBtns = document.querySelectorAll(`section.${status} button.next`);
+
+    // Navigation between table pages/shelves
+    nextBtns.forEach(nextBtn => {
+        nextBtn.addEventListener('click', () => {
+            if (pageNum === numPages() - 1) { // Cannot go to next shelf if already at last shelf
+                return;
+            }
+
+            pageNum += 1;
+            renderTable();
+        })
+    });
+
+    prevBtns.forEach(prevBtn => {
+        prevBtn.addEventListener('click', () => {
+            if (pageNum === 0) { // Cannot go to previous shelf if already at first shelf
+                return;
+            }
+
+            pageNum -= 1;
+            renderTable();
+        })
+    });
 
     // Get array of book objects from this shelf e.g. all books read, or all books to read
-    this.getBooks = () => {
+    const getBooks = () => {
         const allBooks = JSON.parse(localStorage.getItem('books'));
-        return allBooks[this.status];
+        return allBooks[status];
     };
 
     // Update array of book objects for this shelf
-    this.setBooks = books => {
+    const setBooks = books => {
         const allBooks = JSON.parse(localStorage.getItem('books'));
-        allBooks[this.status] = books;
+        allBooks[status] = books;
         localStorage.setItem('books', JSON.stringify(allBooks));
     }
 
-    this.pageSize = 10; // Number of books displayed per table page
+    const pageSize = 10; // Number of books displayed per table page
 
-    this.numPages = () => {
-        const books = this.getBooks();
+    const numPages = () => {
+        const books = getBooks();
 
-        return books.length % this.pageSize === 0
-            ? books.length / this.pageSize
-            : books.length < this.pageSize
-                ? 1
-                : Math.floor(books.length / this.pageSize) + 1;
+        return books.length % pageSize === 0
+            ? books.length / pageSize
+            : books.length < pageSize
+            ? 1
+            : Math.floor(books.length / pageSize) + 1;
     };
 
     // Display first page of table when site is first loaded
-    this.pageNum = 0;
+    // Private variable; closure allows the returned object to retain access to this variable
+    let pageNum = 0;
 
-    this.bookCapacity = this.pageSize * this.numPages;
+    // const bookCapacity = pageSize * numPages;
 
-    this.addBook = book => {
-        const books = this.getBooks();
+    const addBook = book => {
+        const books = getBooks();
         books.push(book);
-        this.setBooks(books);
-        this.pageNum = this.numPages() - 1; // Go to table page where book is added
+        setBooks(books);
+        pageNum = numPages() - 1; // Go to table page where book is added
     };
 
-    this.removeBook = index => {
-        const books = this.getBooks();
+    const removeBook = index => {
+        const books = getBooks();
         books.splice(index, 1);
-        this.setBooks(books);
+        setBooks(books);
         // If there is only 1 remaining book on the last page and we remove it,
         // go to the previous page, which will now become the last page
-        if (this.pageNum === this.numPages()) {
-            this.pageNum = this.numPages() - 1;
+        if (pageNum === numPages()) {
+            pageNum = numPages() - 1;
         }
-    }
+    };
 
-    this.renderTable = () => {
-        const books = this.getBooks();
+    const renderTable = () => {
+        const books = getBooks();
         if (books.length === 0) { // Empty table placeholder
-            this.table.innerHTML = "<tr><td colspan='6'>You aren't currently reading any books</td></tr>";
+            table.innerHTML = "<tr><td colspan='6'>You aren't currently reading any books</td></tr>";
             return;
         }
 
-        this.table.innerHTML = '';
+        table.innerHTML = '';
 
-        const currentBooks = books.slice(this.pageNum * this.pageSize,
-            this.pageNum * this.pageSize + this.pageSize);
+        const currentBooks = books.slice(pageNum * pageSize,
+            pageNum * pageSize + pageSize);
 
         currentBooks.forEach((book, index) => {
             const bookEntry = document.querySelector('template.book-entry').content.cloneNode(true);
 
-            bookEntry.querySelector('td.index').textContent = index + this.pageNum * this.pageSize + 1;
+            bookEntry.querySelector('td.index').textContent = index + pageNum * pageSize + 1;
             bookEntry.querySelector('td.title').textContent = book.title;
             bookEntry.querySelector('td.author').textContent = book.author;
 
@@ -123,20 +150,31 @@ function Bookshelf(shelfStatus) {
 
             bookEntry.querySelector('td.date-read').textContent = book.dateRead;
 
-            this.table.appendChild(bookEntry);
+            table.appendChild(bookEntry);
         });
     };
 
-    this.prevBtns = document.querySelectorAll(`section.${this.status} button.prev`);
-    this.nextBtns = document.querySelectorAll(`section.${this.status} button.next`);
+    const sortShelf = () => {
+        
+    }
+
+    return {
+        status,
+        table,
+        prevBtns, nextBtns,
+        pageSize, numPages,
+        getBooks, setBooks,
+        addBook, removeBook,
+        renderTable
+    };
 
 }
 
 // Library object created via IIFE
 const library = (() => {
-    const readShelf = new Bookshelf('read');
-    const readingShelf = new Bookshelf('reading');
-    const toReadShelf = new Bookshelf('to-read');
+    const readShelf = Bookshelf('read');
+    const readingShelf = Bookshelf('reading');
+    const toReadShelf = Bookshelf('to-read');
 
     const getShelves = () => {
         return [readShelf, readingShelf, toReadShelf];
