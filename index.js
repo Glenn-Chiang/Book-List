@@ -126,6 +126,10 @@ function Bookshelf(shelfStatus) {
             this.table.appendChild(bookEntry);
         });
     };
+
+    this.prevBtns = document.querySelectorAll(`section.${this.status} button.prev`);
+    this.nextBtns = document.querySelectorAll(`section.${this.status} button.next`);
+
 }
 
 // Library object created via IIFE
@@ -250,7 +254,7 @@ addBookForm.addEventListener('submit', event => {
     addBookForm.reset();
 })
 
-// Editing books
+// Edit-book form
 const editModal = document.querySelector('div.edit-book');
 const editForm = document.querySelector('form.edit-book');
 
@@ -259,7 +263,32 @@ const removeBtn = editForm.querySelector('button.remove');
 const cancelBtn = editForm.querySelector('button.cancel');
 
 const shelves = library.getShelves();
+
 shelves.forEach(shelf => {
+    // Navigation between table pages/shelves
+    shelf.nextBtns.forEach(nextBtn => {
+        nextBtn.addEventListener('click', () => {
+            if (shelf.pageNum === shelf.numPages() - 1) { // Cannot go to next shelf if already at last shelf
+                return;
+            }
+
+            shelf.pageNum += 1;
+            shelf.renderTable();
+        })
+    })
+
+    shelf.prevBtns.forEach(prevBtn => {
+        prevBtn.addEventListener('click', () => {
+            if (shelf.pageNum === 0) { // Cannot go to previous shelf if already at first shelf
+                return;
+            }
+
+            shelf.pageNum -= 1;
+            shelf.renderTable();
+        })
+    })
+
+    // Editing books
     shelf.table.addEventListener('click', event => {
         // Use event delegation to bind event listener to table instead of binding directly to edit buttons 
         if (event.target.tagName !== 'BUTTON' || !event.target.classList.contains('edit')) {
@@ -282,25 +311,29 @@ shelves.forEach(shelf => {
         const currentStatus = editForm.querySelector(`input[name="status"][value="${targetBook.status}"]`)
 
         // Pre-fill each form field with current data of book
-        titleField.value = targetBook.title;
-        authorField.value = targetBook.author;
-
-        if (targetBook.rating) {
-            ratingField.value = targetBook.rating;
-        } else {
-            ratingField.value = "-";
+        function preFill() {
+            titleField.value = targetBook.title;
+            authorField.value = targetBook.author;
+    
+            if (targetBook.rating) {
+                ratingField.value = targetBook.rating;
+            } else {
+                ratingField.value = "-";
+            }
+    
+            dateField.value = targetBook.dateRead;
+            currentStatus.checked = true;
+    
+            // Bind the index of the target book to the edit-form and the remove button 
+            // This allows the respective event listener callback functions to identify the target book
+            editForm['data-shelf'] = shelf.status
+            editForm['data-index'] = index;
+    
+            removeBtn['data-shelf'] = shelf.status
+            removeBtn['data-index'] = index;
         }
 
-        dateField.value = targetBook.dateRead;
-        currentStatus.checked = true;
-
-        // Bind the index of the target book to the edit-form and the remove button 
-        // This allows the respective event listener callback functions to identify the target book
-        editForm['data-shelf'] = shelf.status
-        editForm['data-index'] = index;
-
-        removeBtn['data-shelf'] = shelf.status
-        removeBtn['data-index'] = index;
+        preFill();
     })
 })
 
@@ -367,30 +400,4 @@ cancelBtn.addEventListener('click', () => {
 })
 
 
-// Navigation between table pages/shelves
-const prevBtns = document.querySelectorAll('div.table-controls button.prev');
-const nextBtns = document.querySelectorAll('div.table-controls button.next');
 
-nextBtns.forEach(nextBtn => {
-    nextBtn.addEventListener('click', () => {
-        if (library.shelfNum === library.numShelves() - 1) { // Cannot go to next shelf if already at last shelf
-            return;
-        }
-
-        const books = JSON.parse(localStorage.getItem('books'));
-        library.shelfNum += 1;
-        library.renderTable();
-    })
-})
-
-prevBtns.forEach(prevBtn => {
-    prevBtn.addEventListener('click', () => {
-        if (library.shelfNum === 0) { // Cannot go to previous shelf if already at first shelf
-            return;
-        }
-
-        const books = JSON.parse(localStorage.getItem('books'));
-        library.shelfNum -= 1;
-        library.renderTable();
-    })
-})
