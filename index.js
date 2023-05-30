@@ -33,7 +33,7 @@ if (localStorage.getItem('books') === null) {
     const reading = [];
     const toRead = [];
 
-    const books = { 
+    const books = {
         "read": read,
         "reading": reading,
         "to-read": toRead // Remember that json must have double quotes and not single quotes!
@@ -58,17 +58,17 @@ function Bookshelf(shelfStatus) {
     this.setBooks = books => {
         const allBooks = JSON.parse(localStorage.getItem('books'));
         allBooks[this.status] = books;
-        localStorage.setItem('books', JSON.stringify(allBooks)); 
+        localStorage.setItem('books', JSON.stringify(allBooks));
     }
 
     this.pageSize = 10; // Number of books displayed per table page
-    
+
     this.numPages = () => {
         const books = this.getBooks();
 
         return books.length % this.pageSize === 0
-                ? books.length / this.pageSize
-                : books.length < this.pageSize
+            ? books.length / this.pageSize
+            : books.length < this.pageSize
                 ? 1
                 : Math.floor(books.length / this.pageSize) + 1;
     };
@@ -87,11 +87,8 @@ function Bookshelf(shelfStatus) {
 
     this.removeBook = index => {
         const books = this.getBooks();
-
-        console.log(index, books[index]);
         books.splice(index, 1);
-        localStorage.setItem('books', JSON.stringify(books));
-
+        this.setBooks(books);
         // If there is only 1 remaining book on the last page and we remove it,
         // go to the previous page, which will now become the last page
         if (this.pageNum === this.numPages()) {
@@ -101,7 +98,8 @@ function Bookshelf(shelfStatus) {
 
     this.renderTable = () => {
         const books = this.getBooks();
-        if (books.length === 0) {
+        if (books.length === 0) { // Empty table placeholder
+            this.table.innerHTML = "<tr><td colspan='6'>You don't currently have any books you plan to read</td></tr>";
             return;
         }
 
@@ -116,7 +114,7 @@ function Bookshelf(shelfStatus) {
             bookEntry.querySelector('td.index').textContent = index + this.pageNum * this.pageSize + 1;
             bookEntry.querySelector('td.title').textContent = book.title;
             bookEntry.querySelector('td.author').textContent = book.author;
-            
+
             if (!book.rating) {
                 bookEntry.querySelector('td.rating span.rating').textContent = "-";
             } else {
@@ -135,7 +133,11 @@ const library = (() => {
     const readShelf = new Bookshelf('read');
     const readingShelf = new Bookshelf('reading');
     const toReadShelf = new Bookshelf('to-read');
-    
+
+    const getShelves = () => {
+        return [readShelf, readingShelf, toReadShelf];
+    }
+
     const addBook = book => {
         if (book.status === 'read') {
             // console.log(readShelf)
@@ -203,11 +205,16 @@ const library = (() => {
         document.querySelector('table.library-stats tr.books-to-read td').textContent = numToRead;
 
         const averageRating = calcAverageRating();
-        
+
         document.querySelector('table.library-stats tr.average-rating td').textContent = averageRating !== 0 ? averageRating : "You haven't rated any books";
     };
 
-    return { readShelf, readingShelf, toReadShelf, addBook, renderTable, renderTables, updateStats };
+    return {
+        'read': readShelf,
+        'reading': readingShelf,
+        'to-read': toReadShelf,
+        getShelves, addBook, renderTable, renderTables, updateStats
+    };
 })();
 
 
@@ -251,54 +258,61 @@ const saveBtn = editForm.querySelector('button.save');
 const removeBtn = editForm.querySelector('button.remove');
 const cancelBtn = editForm.querySelector('button.cancel');
 
-// Use event delegation to bind event listener to table instead of binding directly to edit buttons 
-library.readShelf.table.addEventListener('click', event => {
-    if (event.target.tagName !== 'BUTTON' || !event.target.classList.contains('edit')) {
-        return;
-    }
-    // The following code will only run if clicked element is an edit-book button
+const shelves = library.getShelves();
+shelves.forEach(shelf => {
+    shelf.table.addEventListener('click', event => {
+        // Use event delegation to bind event listener to table instead of binding directly to edit buttons 
+        if (event.target.tagName !== 'BUTTON' || !event.target.classList.contains('edit')) {
+            return;
+        }
+        // The following code will only run if clicked element is an edit-book button
 
-    const books = JSON.parse(localStorage.getItem('books'));
+        const books = shelf.getBooks();
 
-    const tableRow = event.target.parentElement.parentElement;
-    const index = Number(tableRow.querySelector('td.index').textContent) - 1;
-    const targetBook = books[index];
+        const tableRow = event.target.parentElement.parentElement;
+        const index = Number(tableRow.querySelector('td.index').textContent) - 1;
+        const targetBook = books[index];
 
-    editModal.classList.add('show');
+        editModal.classList.add('show');
 
-    const titleField = document.getElementById('edit-title');
-    const authorField = document.getElementById('edit-author');
-    const ratingField = document.getElementById('edit-rating');
-    const dateField = document.getElementById('edit-date-read');
-    const currentStatus = editForm.querySelector(`input[name="status"][value="${targetBook.status}"]`)
+        const titleField = document.getElementById('edit-title');
+        const authorField = document.getElementById('edit-author');
+        const ratingField = document.getElementById('edit-rating');
+        const dateField = document.getElementById('edit-date-read');
+        const currentStatus = editForm.querySelector(`input[name="status"][value="${targetBook.status}"]`)
 
-    // Pre-fill each form field with current data of book
-    titleField.value = targetBook.title;
-    authorField.value = targetBook.author;
+        // Pre-fill each form field with current data of book
+        titleField.value = targetBook.title;
+        authorField.value = targetBook.author;
 
-    if (targetBook.rating) {
-        ratingField.value = targetBook.rating;
-    } else {
-        ratingField.value = "-";
-    }
+        if (targetBook.rating) {
+            ratingField.value = targetBook.rating;
+        } else {
+            ratingField.value = "-";
+        }
 
-    dateField.value = targetBook.dateRead;
-    currentStatus.checked = true;
+        dateField.value = targetBook.dateRead;
+        currentStatus.checked = true;
 
-    // Bind the index of the target book to the edit-form and the remove button 
-    // This allows the respective event listener callback functions to identify the target book
-    editForm['data-index'] = index;
-    removeBtn['data-index'] = index;
+        // Bind the index of the target book to the edit-form and the remove button 
+        // This allows the respective event listener callback functions to identify the target book
+        editForm['data-shelf'] = shelf.status
+        editForm['data-index'] = index;
+
+        removeBtn['data-shelf'] = shelf.status
+        removeBtn['data-index'] = index;
+    })
 })
-
 
 // Save edit
 editForm.addEventListener('submit', event => {
     event.preventDefault(); // Prevent page refresh
 
-    index = event.target['data-index']; // Identify which book to edit
-    const books = JSON.parse(localStorage.getItem('books'));
-    targetBook = books[index];
+    const shelf = library[event.target['data-shelf']];
+    const index = event.target['data-index']; // Identify which book to edit
+
+    const books = shelf.getBooks();
+    const targetBook = books[index];
 
     const titleField = document.getElementById('edit-title');
     const authorField = document.getElementById('edit-author');
@@ -307,7 +321,7 @@ editForm.addEventListener('submit', event => {
 
     targetBook.title = titleField.value;
     targetBook.author = authorField.value;
-    
+
     if (ratingField.value === '-') {
         targetBook.rating = null;
     } else {
@@ -319,16 +333,19 @@ editForm.addEventListener('submit', event => {
 
     books[index] = targetBook;
 
-    localStorage.setItem('books', JSON.stringify(books));
-    library.renderTable();
+    shelf.setBooks(books);
+    shelf.renderTable();
     library.updateStats();
     editModal.classList.remove('show');
-})    
+})
 
 // Remove book
-removeBtn.addEventListener('click', event => { 
-    library.removeBook(event.target['data-index']);
-    library.renderTable();
+removeBtn.addEventListener('click', event => {
+    const shelf = library[event.target['data-shelf']];
+    const index = event.target['data-index']; // Identify which book to edit
+
+    shelf.removeBook(index);
+    shelf.renderTable();
     library.updateStats();
     editModal.classList.remove('show');
 })
@@ -348,21 +365,21 @@ nextBtns.forEach(nextBtn => {
         if (library.shelfNum === library.numShelves() - 1) { // Cannot go to next shelf if already at last shelf
             return;
         }
-    
+
         const books = JSON.parse(localStorage.getItem('books'));
         library.shelfNum += 1;
         library.renderTable();
-    })    
-}) 
+    })
+})
 
 prevBtns.forEach(prevBtn => {
     prevBtn.addEventListener('click', () => {
         if (library.shelfNum === 0) { // Cannot go to previous shelf if already at first shelf
             return;
         }
-    
+
         const books = JSON.parse(localStorage.getItem('books'));
         library.shelfNum -= 1;
         library.renderTable();
-    })    
+    })
 })
