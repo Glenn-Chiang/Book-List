@@ -48,6 +48,7 @@ function Bookshelf(shelfStatus) {
 
     const table = document.querySelector(`section.${status} table tbody`);
     
+    // Private variables
     const prevBtns = document.querySelectorAll(`section.${status} button.prev`);
     const nextBtns = document.querySelectorAll(`section.${status} button.next`);
 
@@ -123,12 +124,64 @@ function Bookshelf(shelfStatus) {
         }
     };
 
+
+    let sortBasis = 'author';
+
+    const sortShelf = books => {
+        const sortByAuthor = books => {
+            books.sort((bookA, bookB) => {
+                if (bookA.author.toLowerCase() < bookB.author.toLowerCase()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            });
+            return books;
+        }
+
+        const sortByRatingAsc = books => {
+            books.sort((bookA, bookB) => {
+                return bookA.rating - bookB.rating;
+            });
+            return books;
+        };
+
+        const sortByRatingDesc = books => {
+            books.sort((bookA , bookB) => {
+                return bookB.rating - bookA.rating;
+            });
+            return books;
+        };
+
+        if (sortBasis === 'date-added') {
+            return books; // Original order in which books are stored in local storage
+        } else if (sortBasis === 'author') {
+            return sortByAuthor(books);
+        } else if (sortBasis === 'rating-asc') {
+            return sortByRatingAsc(books);
+        } else if (sortBasis === 'rating-desc') {
+            return sortByRatingDesc(books);
+        }
+    };
+    
+
     const renderTable = () => {
-        const books = getBooks();
+        let books = getBooks();
+
+        const placeholder = status === 'read'
+                          ? "<tr><td colspan='6'>You haven't marked any books as read</td></tr>"
+                          : status === 'reading'
+                          ? "<tr><td colspan='6'>You aren't currently reading any books</td></tr>"
+                          : "<tr><td colspan='6'>You don't currently plan to read any books</td></tr>"
+
         if (books.length === 0) { // Empty table placeholder
-            table.innerHTML = "<tr><td colspan='6'>You aren't currently reading any books</td></tr>";
+            table.innerHTML = placeholder;
             return;
         }
+
+        // filterShelf();
+
+        books = sortShelf(books);
 
         table.innerHTML = '';
 
@@ -154,14 +207,9 @@ function Bookshelf(shelfStatus) {
         });
     };
 
-    const sortShelf = () => {
-        
-    }
-
     return {
         status,
         table,
-        prevBtns, nextBtns,
         pageSize, numPages,
         getBooks, setBooks,
         addBook, removeBook,
@@ -303,29 +351,6 @@ const cancelBtn = editForm.querySelector('button.cancel');
 const shelves = library.getShelves();
 
 shelves.forEach(shelf => {
-    // Navigation between table pages/shelves
-    shelf.nextBtns.forEach(nextBtn => {
-        nextBtn.addEventListener('click', () => {
-            if (shelf.pageNum === shelf.numPages() - 1) { // Cannot go to next shelf if already at last shelf
-                return;
-            }
-
-            shelf.pageNum += 1;
-            shelf.renderTable();
-        })
-    })
-
-    shelf.prevBtns.forEach(prevBtn => {
-        prevBtn.addEventListener('click', () => {
-            if (shelf.pageNum === 0) { // Cannot go to previous shelf if already at first shelf
-                return;
-            }
-
-            shelf.pageNum -= 1;
-            shelf.renderTable();
-        })
-    })
-
     // Editing books
     shelf.table.addEventListener('click', event => {
         // Use event delegation to bind event listener to table instead of binding directly to edit buttons 
