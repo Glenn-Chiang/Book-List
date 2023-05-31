@@ -78,7 +78,9 @@ function Bookshelf(shelfStatus) {
     // Get array of book objects from this shelf e.g. all books read, or all books to read
     const getBooks = () => {
         const allBooks = JSON.parse(localStorage.getItem('books'));
-        return allBooks[status];
+        const books = allBooks[status];
+        sortedBooks = sortShelf(books)
+        return sortedBooks;
     };
 
     // Update array of book objects for this shelf
@@ -180,8 +182,6 @@ function Bookshelf(shelfStatus) {
         }
 
         // filterShelf();
-
-        books = sortShelf(books);
 
         table.innerHTML = '';
 
