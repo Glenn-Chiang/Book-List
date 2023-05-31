@@ -56,8 +56,7 @@ form.add-book .form-fields > div {
     gap: 10px;
 }
 
-form.add-book input, form.add-book select, 
-form.edit-book input, form.edit-book select {
+input, select {
     border: 2px solid #1ca9c9;
     border-radius: 10px;
     padding: 10px;
@@ -272,12 +271,16 @@ div.table-controls {
     justify-content: center;
 }
 
-div.table-controls div.filter, div.table-controls div.empty {
+div.table-controls div.filter, div.table-controls div.sort {
     flex: 1;
 }
 
 div.filter {
     text-align: left;
+}
+
+div.sort {
+    text-align: right;
 }
 
 div.table-controls button {

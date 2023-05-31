@@ -48,6 +48,22 @@ function Bookshelf(shelfStatus) {
 
     const table = document.querySelector(`section.${status} table tbody`);
     
+    const pageSize = 10; // Number of books displayed per table page
+
+    const numPages = () => {
+        const books = getBooks();
+
+        return books.length % pageSize === 0
+            ? books.length / pageSize
+            : books.length < pageSize
+            ? 1
+            : Math.floor(books.length / pageSize) + 1;
+    };
+
+    // Display first page of table when site is first loaded
+    // Private variable; closure allows the returned object to retain access to this variable
+    let pageNum = 0;
+
     const prevBtns = document.querySelectorAll(`section.${status} button.prev`);
     const nextBtns = document.querySelectorAll(`section.${status} button.next`);
     const firstBtns = document.querySelectorAll(`section.${status} button.first`);
@@ -89,7 +105,7 @@ function Bookshelf(shelfStatus) {
             renderTable();
         })
     })
-
+    
     // Get array of book objects from this shelf e.g. all books read, or all books to read
     const getBooks = () => {
         const allBooks = JSON.parse(localStorage.getItem('books'));
@@ -97,38 +113,23 @@ function Bookshelf(shelfStatus) {
         sortedBooks = sortShelf(books)
         return sortedBooks;
     };
-
+    
     // Update array of book objects for this shelf
     const setBooks = books => {
         const allBooks = JSON.parse(localStorage.getItem('books'));
         allBooks[status] = books;
         localStorage.setItem('books', JSON.stringify(allBooks));
     }
-
-    const pageSize = 10; // Number of books displayed per table page
-
-    const numPages = () => {
-        const books = getBooks();
-
-        return books.length % pageSize === 0
-            ? books.length / pageSize
-            : books.length < pageSize
-            ? 1
-            : Math.floor(books.length / pageSize) + 1;
-    };
-
-    // Display first page of table when site is first loaded
-    // Private variable; closure allows the returned object to retain access to this variable
-    let pageNum = 0;
-
+    
+    
     // const bookCapacity = pageSize * numPages;
-
+    
     const addBook = book => {
         const books = getBooks();
         books.push(book);
         setBooks(books);
     };
-
+    
     const removeBook = index => {
         const books = getBooks();
         books.splice(index, 1);
@@ -139,10 +140,19 @@ function Bookshelf(shelfStatus) {
             pageNum = numPages() - 1;
         }
     };
-
-
+    
+    
+    // Sorting
     let sortBasis = 'author';
-
+    
+    const sortOptions = document.querySelector(`section.${status} select.sort`);
+    const sortBtn = document.querySelector(`section.${status} button.sort`);
+    
+    sortBtn.addEventListener('click', () => {
+        sortBasis = sortOptions.value;
+        renderTable();
+    })
+    
     const sortShelf = books => {
         const sortByAuthor = books => {
             books.sort((bookA, bookB) => {
@@ -154,7 +164,7 @@ function Bookshelf(shelfStatus) {
             });
             return books;
         }
-
+        
         const sortByRatingAsc = books => {
             books.sort((bookA, bookB) => {
                 return bookA.rating - bookB.rating;
