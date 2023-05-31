@@ -48,13 +48,25 @@ function Bookshelf(shelfStatus) {
 
     const table = document.querySelector(`section.${status} table tbody`);
     
-    // Private variables
     const prevBtns = document.querySelectorAll(`section.${status} button.prev`);
     const nextBtns = document.querySelectorAll(`section.${status} button.next`);
+    const firstBtns = document.querySelectorAll(`section.${status} button.first`);
+    const lastBtns = document.querySelectorAll(`section.${status} button.last`);
 
     // Navigation between table pages/shelves
-    nextBtns.forEach(nextBtn => {
-        nextBtn.addEventListener('click', () => {
+    prevBtns.forEach(button => {
+        button.addEventListener('click', () => {
+            if (pageNum === 0) { // Cannot go to previous shelf if already at first shelf
+                return;
+            }
+
+            pageNum -= 1;
+            renderTable();
+        })
+    });
+
+    nextBtns.forEach(button => {
+        button.addEventListener('click', () => {
             if (pageNum === numPages() - 1) { // Cannot go to next shelf if already at last shelf
                 return;
             }
@@ -64,16 +76,19 @@ function Bookshelf(shelfStatus) {
         })
     });
 
-    prevBtns.forEach(prevBtn => {
-        prevBtn.addEventListener('click', () => {
-            if (pageNum === 0) { // Cannot go to previous shelf if already at first shelf
-                return;
-            }
-
-            pageNum -= 1;
+    firstBtns.forEach(button => {
+        button.addEventListener('click', () => {
+            pageNum = 0;
             renderTable();
         })
     });
+
+    lastBtns.forEach(button => {
+        button.addEventListener('click', () => {
+            pageNum = numPages() - 1;
+            renderTable();
+        })
+    })
 
     // Get array of book objects from this shelf e.g. all books read, or all books to read
     const getBooks = () => {
@@ -112,7 +127,6 @@ function Bookshelf(shelfStatus) {
         const books = getBooks();
         books.push(book);
         setBooks(books);
-        pageNum = numPages() - 1; // Go to table page where book is added
     };
 
     const removeBook = index => {
