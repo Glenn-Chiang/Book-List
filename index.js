@@ -149,13 +149,29 @@ function Bookshelf(shelfStatus) {
     };
 
     // Filtering/searching
-    let filterTerm = null;
+    let filterTerm = '';
 
     const filterField = document.querySelector(`section.${status} input.filter`);
     const filterBtn = document.querySelector(`section.${status} button.filter`);
+    const clearBtn = document.querySelector(`section.${status} button.clear-filter`);
 
     filterBtn.addEventListener('click', () => {
         filterTerm = filterField.value.toLowerCase();
+        renderTable();
+    })
+
+    // Filter on hitting enter
+    filterField.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            filterTerm = filterField.value.toLowerCase();
+
+            renderTable();
+        }
+    })   
+    
+    clearBtn.addEventListener('click', () => {
+        filterTerm = ''
+        filterField.value = ''
         renderTable();
     })
 
@@ -232,7 +248,7 @@ function Bookshelf(shelfStatus) {
                 : "<td colspan='6'>You don't currently plan to read any books</td>"
 
         if (currentBooks.length === 0) { // Empty table placeholder
-            table.querySelector('tr').innerHTML = placeholder;
+            table.innerHTML = placeholder;
             return;
         }
 
