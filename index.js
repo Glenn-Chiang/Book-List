@@ -28,18 +28,18 @@ function Book(title, author, ratingString, status) {
 }
 
 // Initialize empty bookshelves in local storage 
-if (localStorage.getItem('books') === null) {
+if (localStorage.getItem('library') === null) {
     const read = [];
     const reading = [];
     const toRead = [];
 
-    const books = {
+    const library = {
         "read": read,
         "reading": reading,
         "to-read": toRead // Remember that json must have double quotes and not single quotes!
     }
 
-    localStorage.setItem('books', JSON.stringify(books));
+    localStorage.setItem('library', JSON.stringify(library));
 }
 
 // Constructor function for read, reading and toRead shelves
@@ -106,17 +106,25 @@ function Bookshelf(shelfStatus) {
         })
     })
 
-    // Get array of book objects from this shelf e.g. all books read, or all books to read
+    // Get array of book objects from this shelf 
+    // Store the book's original index (its index in the STORED array) as a property of the book
+    // This allows us to locate the book in the stored array even after the array is filtered and sorted
     const getBooks = () => {
-        const allBooks = JSON.parse(localStorage.getItem('books'));
-        return allBooks[status];
+        const library = JSON.parse(localStorage.getItem('library'));
+        const books = library[status] // Array of all books in this shelf
+
+        books.forEach((book, index) => {
+            book.index = index;
+        })
+
+        return books;
     };
 
     // Update array of book objects for this shelf
     const setBooks = books => {
-        const allBooks = JSON.parse(localStorage.getItem('books'));
-        allBooks[status] = books;
-        localStorage.setItem('books', JSON.stringify(allBooks));
+        const library = JSON.parse(localStorage.getItem('library'));
+        library[status] = books;
+        localStorage.setItem('library', JSON.stringify(library));
     }
 
     // Whenever a book is added to any shelf, update its 'dateAdded' property
@@ -157,7 +165,7 @@ function Bookshelf(shelfStatus) {
         }
 
         return books.filter(book => {
-            return book.title.toLowerCase().includes(filterTerm)||
+            return book.title.toLowerCase().includes(filterTerm) ||
                 book.author.toLowerCase().includes(filterTerm);
         })
     }
@@ -215,14 +223,16 @@ function Bookshelf(shelfStatus) {
         const allBooks = getBooks(); // All books on this shelf
         const currentBooks = sortShelf(filterShelf(allBooks)); // Filtered and sorted books
 
-        const placeholder = status === 'read'
-            ? "<tr><td colspan='6'>You haven't marked any books as read</td></tr>"
+        const placeholder = filterTerm !== null
+            ? "<td colspan='6'>No books found</td>"
+            : status === 'read'
+            ? "<td colspan='6'>You haven't marked any books as read</td>"
             : status === 'reading'
-                ? "<tr><td colspan='6'>You aren't currently reading any books</td></tr>"
-                : "<tr><td colspan='6'>You don't currently plan to read any books</td></tr>"
+                ? "<td colspan='6'>You aren't currently reading any books</td>"
+                : "<td colspan='6'>You don't currently plan to read any books</td>"
 
         if (currentBooks.length === 0) { // Empty table placeholder
-            table.innerHTML = placeholder;
+            table.querySelector('tr').innerHTML = placeholder;
             return;
         }
 
@@ -238,11 +248,9 @@ function Bookshelf(shelfStatus) {
             bookEntry.querySelector('td.title').textContent = book.title;
             bookEntry.querySelector('td.author').textContent = book.author;
 
-            if (!book.rating) {
-                bookEntry.querySelector('td.rating span.rating').textContent = "-";
-            } else {
-                bookEntry.querySelector('td.rating span.rating').textContent = book.rating;
-            }
+            bookEntry.querySelector('td.rating span.rating').textContent = book.rating === null
+                ? '-'
+                : book.rating;
 
             bookEntry.querySelector('td.date-added').textContent = book.dateAdded;
 
@@ -302,8 +310,8 @@ const library = (() => {
 
     // Private method
     const calcAverageRating = () => {
-        const books = JSON.parse(localStorage.getItem('books'));
-        const allBooks = books['read'].concat(books['reading'], books['to-read']);
+        const library = JSON.parse(localStorage.getItem('library'));
+        const allBooks = library['read'].concat(library['reading'], library['to-read']);
 
         let numRatedBooks = 0;
 
@@ -325,11 +333,11 @@ const library = (() => {
     };
 
     const updateStats = () => {
-        const books = JSON.parse(localStorage.getItem('books'));
+        const library = JSON.parse(localStorage.getItem('library'));
 
-        const numRead = books['read'].length;
-        const numReading = books['reading'].length;
-        const numToRead = books['to-read'].length;
+        const numRead = library['read'].length;
+        const numReading = library['reading'].length;
+        const numToRead = library['to-read'].length;
         const numTotal = numRead + numReading + numToRead;
 
         document.querySelector('table.library-stats tr.total-books td').textContent = numTotal;
@@ -403,8 +411,8 @@ shelves.forEach(shelf => {
         const books = shelf.sortShelf(shelf.filterShelf(shelf.getBooks()));
 
         const tableRow = event.target.parentElement.parentElement;
-        const index = Number(tableRow.querySelector('td.index').textContent) - 1;
-        const targetBook = books[index];
+        const renderedIndex = Number(tableRow.querySelector('td.index').textContent) - 1;
+        const targetBook = books[renderedIndex];
 
         editModal.classList.add('show');
 
@@ -429,10 +437,10 @@ shelves.forEach(shelf => {
             // Bind the index of the target book to the edit-form and the remove button 
             // This allows the respective event listener callback functions to identify the target book
             editForm['data-shelf'] = shelf.status
-            editForm['data-index'] = index;
+            editForm['data-index'] = targetBook.index;
 
             removeBtn['data-shelf'] = shelf.status
-            removeBtn['data-index'] = index;
+            removeBtn['data-index'] = targetBook.index;
         }
 
         preFill();
@@ -446,9 +454,8 @@ editForm.addEventListener('submit', event => {
     const shelf = library[event.target['data-shelf']];
     const index = event.target['data-index']; // Identify which book to edit
 
-    const allBooks = shelf.getBooks();
-    const currentBooks = shelf.sortShelf(shelf.filterShelf(allBooks));
-    const targetBook = currentBooks[index];
+    const books = shelf.getBooks();
+    const targetBook = books[index];
 
     const titleField = document.getElementById('edit-title');
     const authorField = document.getElementById('edit-author');
@@ -474,7 +481,7 @@ editForm.addEventListener('submit', event => {
         shelf.renderTable();
 
     } else {
-        currentBooks[index] = targetBook; // if status is unchanged, book remains in current shelf
+        books[index] = targetBook; // if status is unchanged, book remains in current shelf
         shelf.setBooks(allBooks);
         shelf.renderTable();
     }
