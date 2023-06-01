@@ -19,12 +19,12 @@ cancelAddBook.addEventListener('click', () => {
 
 
 // Book object factory function
-function Book(title, author, ratingString, dateRead, status) {
+function Book(title, author, ratingString, status) {
     let rating = null;
     if (ratingString !== '-') {
         rating = Number(ratingString);
     }
-    return { title, author, rating, dateRead, status };
+    return { title, author, rating, status };
 }
 
 // Initialize empty bookshelves in local storage 
@@ -47,7 +47,7 @@ function Bookshelf(shelfStatus) {
     const status = shelfStatus;
 
     const table = document.querySelector(`section.${status} table tbody`);
-    
+
     const pageSize = 10; // Number of books displayed per table page
 
     const numPages = () => {
@@ -56,8 +56,8 @@ function Bookshelf(shelfStatus) {
         return books.length % pageSize === 0
             ? books.length / pageSize
             : books.length < pageSize
-            ? 1
-            : Math.floor(books.length / pageSize) + 1;
+                ? 1
+                : Math.floor(books.length / pageSize) + 1;
     };
 
     // Display first page of table when site is first loaded
@@ -105,31 +105,30 @@ function Bookshelf(shelfStatus) {
             renderTable();
         })
     })
-    
+
     // Get array of book objects from this shelf e.g. all books read, or all books to read
     const getBooks = () => {
         const allBooks = JSON.parse(localStorage.getItem('books'));
-        const books = allBooks[status];
-        sortedBooks = sortShelf(books)
-        return sortedBooks;
+        return allBooks[status];
     };
-    
+
     // Update array of book objects for this shelf
     const setBooks = books => {
         const allBooks = JSON.parse(localStorage.getItem('books'));
         allBooks[status] = books;
         localStorage.setItem('books', JSON.stringify(allBooks));
     }
-    
-    
-    // const bookCapacity = pageSize * numPages;
-    
+
+    // Whenever a book is added to any shelf, update its 'dateAdded' property
     const addBook = book => {
+        const currentDate = (new Date()).toISOString().split('T')[0];
+        book.dateAdded = currentDate;
+
         const books = getBooks();
         books.push(book);
         setBooks(books);
     };
-    
+
     const removeBook = index => {
         const books = getBooks();
         books.splice(index, 1);
@@ -140,19 +139,40 @@ function Bookshelf(shelfStatus) {
             pageNum = numPages() - 1;
         }
     };
-    
-    
+
+    // Filtering/searching
+    let filterTerm = null;
+
+    const filterField = document.querySelector(`section.${status} input.filter`);
+    const filterBtn = document.querySelector(`section.${status} button.filter`);
+
+    filterBtn.addEventListener('click', () => {
+        filterTerm = filterField.value.toLowerCase();
+        renderTable();
+    })
+
+    const filterShelf = books => {
+        if (!filterTerm) {
+            return books;
+        }
+
+        return books.filter(book => {
+            return book.title.toLowerCase().includes(filterTerm)||
+                book.author.toLowerCase().includes(filterTerm);
+        })
+    }
+
     // Sorting
     let sortBasis = 'author';
-    
+
     const sortOptions = document.querySelector(`section.${status} select.sort`);
     const sortBtn = document.querySelector(`section.${status} button.sort`);
-    
+
     sortBtn.addEventListener('click', () => {
         sortBasis = sortOptions.value;
         renderTable();
     })
-    
+
     const sortShelf = books => {
         const sortByAuthor = books => {
             books.sort((bookA, bookB) => {
@@ -164,7 +184,7 @@ function Bookshelf(shelfStatus) {
             });
             return books;
         }
-        
+
         const sortByRatingAsc = books => {
             books.sort((bookA, bookB) => {
                 return bookA.rating - bookB.rating;
@@ -173,7 +193,7 @@ function Bookshelf(shelfStatus) {
         };
 
         const sortByRatingDesc = books => {
-            books.sort((bookA , bookB) => {
+            books.sort((bookA, bookB) => {
                 return bookB.rating - bookA.rating;
             });
             return books;
@@ -189,30 +209,29 @@ function Bookshelf(shelfStatus) {
             return sortByRatingDesc(books);
         }
     };
-    
+
 
     const renderTable = () => {
-        let books = getBooks();
+        const allBooks = getBooks(); // All books on this shelf
+        const currentBooks = sortShelf(filterShelf(allBooks)); // Filtered and sorted books
 
         const placeholder = status === 'read'
-                          ? "<tr><td colspan='6'>You haven't marked any books as read</td></tr>"
-                          : status === 'reading'
-                          ? "<tr><td colspan='6'>You aren't currently reading any books</td></tr>"
-                          : "<tr><td colspan='6'>You don't currently plan to read any books</td></tr>"
+            ? "<tr><td colspan='6'>You haven't marked any books as read</td></tr>"
+            : status === 'reading'
+                ? "<tr><td colspan='6'>You aren't currently reading any books</td></tr>"
+                : "<tr><td colspan='6'>You don't currently plan to read any books</td></tr>"
 
-        if (books.length === 0) { // Empty table placeholder
+        if (currentBooks.length === 0) { // Empty table placeholder
             table.innerHTML = placeholder;
             return;
         }
 
-        // filterShelf();
-
         table.innerHTML = '';
 
-        const currentBooks = books.slice(pageNum * pageSize,
+        const renderedBooks = currentBooks.slice(pageNum * pageSize, // Books shown on current page in table
             pageNum * pageSize + pageSize);
 
-        currentBooks.forEach((book, index) => {
+        renderedBooks.forEach((book, index) => {
             const bookEntry = document.querySelector('template.book-entry').content.cloneNode(true);
 
             bookEntry.querySelector('td.index').textContent = index + pageNum * pageSize + 1;
@@ -225,7 +244,7 @@ function Bookshelf(shelfStatus) {
                 bookEntry.querySelector('td.rating span.rating').textContent = book.rating;
             }
 
-            bookEntry.querySelector('td.date-read').textContent = book.dateRead;
+            bookEntry.querySelector('td.date-added').textContent = book.dateAdded;
 
             table.appendChild(bookEntry);
         });
@@ -234,9 +253,9 @@ function Bookshelf(shelfStatus) {
     return {
         status,
         table,
-        pageSize, numPages,
         getBooks, setBooks,
         addBook, removeBook,
+        sortShelf, filterShelf,
         renderTable
     };
 
@@ -345,17 +364,15 @@ addBookForm.addEventListener('submit', event => {
     const titleField = document.getElementById('title');
     const authorField = document.getElementById('author');
     const ratingField = document.getElementById('rating');
-    const dateReadField = document.getElementById('date-read');
 
-    const title = titleField.value;
-    const author = authorField.value;
+    const title = titleField.value.trim();
+    const author = authorField.value.trim();
     const rating = ratingField.value;
-    const dateRead = dateReadField.value;
     const status = document.querySelector('input[name="status"]:checked').value;
 
-    const book = Book(title, author, rating, dateRead, status);
-    library.addBook(book);
-    library.renderTable(status);
+    const book = Book(title, author, rating, status);
+    library[status].addBook(book);
+    library[status].renderTable();
     library.updateStats();
 
     addBookForm.classList.remove('show');
@@ -383,7 +400,7 @@ shelves.forEach(shelf => {
         }
         // The following code will only run if clicked element is an edit-book button
 
-        const books = shelf.getBooks();
+        const books = shelf.sortShelf(shelf.filterShelf(shelf.getBooks()));
 
         const tableRow = event.target.parentElement.parentElement;
         const index = Number(tableRow.querySelector('td.index').textContent) - 1;
@@ -394,28 +411,26 @@ shelves.forEach(shelf => {
         const titleField = document.getElementById('edit-title');
         const authorField = document.getElementById('edit-author');
         const ratingField = document.getElementById('edit-rating');
-        const dateField = document.getElementById('edit-date-read');
         const currentStatus = editForm.querySelector(`input[name="status"][value="${targetBook.status}"]`)
 
         // Pre-fill each form field with current data of book
         function preFill() {
             titleField.value = targetBook.title;
             authorField.value = targetBook.author;
-    
+
             if (targetBook.rating) {
                 ratingField.value = targetBook.rating;
             } else {
                 ratingField.value = "-";
             }
-    
-            dateField.value = targetBook.dateRead;
+
             currentStatus.checked = true;
-    
+
             // Bind the index of the target book to the edit-form and the remove button 
             // This allows the respective event listener callback functions to identify the target book
             editForm['data-shelf'] = shelf.status
             editForm['data-index'] = index;
-    
+
             removeBtn['data-shelf'] = shelf.status
             removeBtn['data-index'] = index;
         }
@@ -431,24 +446,22 @@ editForm.addEventListener('submit', event => {
     const shelf = library[event.target['data-shelf']];
     const index = event.target['data-index']; // Identify which book to edit
 
-    const books = shelf.getBooks();
-    const targetBook = books[index];
+    const allBooks = shelf.getBooks();
+    const currentBooks = shelf.sortShelf(shelf.filterShelf(allBooks));
+    const targetBook = currentBooks[index];
 
     const titleField = document.getElementById('edit-title');
     const authorField = document.getElementById('edit-author');
     const ratingField = document.getElementById('edit-rating');
-    const dateField = document.getElementById('edit-date-read');
 
-    targetBook.title = titleField.value;
-    targetBook.author = authorField.value;
+    targetBook.title = titleField.value.trim();
+    targetBook.author = authorField.value.trim();
 
     if (ratingField.value === '-') {
         targetBook.rating = null;
     } else {
         targetBook.rating = Number(ratingField.value);
     }
-
-    targetBook.dateRead = dateField.value;
 
     const newStatus = editForm.querySelector(`input[name="status"]:checked`).value;
     if (targetBook.status !== newStatus) { // If status is changed, move book to new shelf
@@ -461,8 +474,8 @@ editForm.addEventListener('submit', event => {
         shelf.renderTable();
 
     } else {
-        books[index] = targetBook; // if status is unchanged, book remains in current shelf
-        shelf.setBooks(books);
+        currentBooks[index] = targetBook; // if status is unchanged, book remains in current shelf
+        shelf.setBooks(allBooks);
         shelf.renderTable();
     }
 

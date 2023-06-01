@@ -4,6 +4,7 @@ body, button {
 
 button {
     transition: 0.2s;
+    font-size: large;
 }
 
 header {
@@ -49,8 +50,4 @@ nav ul li:last-child{
 
 main {
     text-align: center;
-}
-
-button {
-    font-size: large;
 }

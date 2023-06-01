@@ -1,4 +1,4 @@
-body, input, select {
+body, input, input::placeholder, select {
     color: #0093AF;
     font-family: montserrat;
     font-size: medium;
@@ -87,7 +87,7 @@ form.add-book button[type='submit'] {
     background-color: lightseagreen;
 }
 
-form.add-book button.submit:hover {
+form.add-book button[type='submit']:hover {
     background-color: darkturquoise;
 }
 
@@ -156,7 +156,7 @@ table.library thead th.rating {
     width: 5%;
 }
 
-table.library thead th.date-read {
+table.library thead th.date-added {
     width: 20%;
 }
 
@@ -268,7 +268,11 @@ form.edit-book > div.buttons {
 div.table-controls {
     margin: 20px;
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
+}
+
+div.table-controls div.nav-buttons {
+    flex: 1
 }
 
 div.table-controls div.filter, div.table-controls div.sort {
