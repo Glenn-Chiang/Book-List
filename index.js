@@ -482,7 +482,7 @@ editForm.addEventListener('submit', event => {
 
     } else {
         books[index] = targetBook; // if status is unchanged, book remains in current shelf
-        shelf.setBooks(allBooks);
+        shelf.setBooks(books);
         shelf.renderTable();
     }
 
