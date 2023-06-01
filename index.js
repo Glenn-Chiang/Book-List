@@ -157,6 +157,9 @@ function Bookshelf(shelfStatus) {
 
     filterBtn.addEventListener('click', () => {
         filterTerm = filterField.value.toLowerCase();
+        if (filterTerm) {
+            pageNum = 0;
+        }
         renderTable();
     })
 
@@ -164,7 +167,9 @@ function Bookshelf(shelfStatus) {
     filterField.addEventListener('keydown', event => {
         if (event.key === 'Enter') {
             filterTerm = filterField.value.toLowerCase();
-
+            if (filterTerm) {
+                pageNum = 0;
+            }
             renderTable();
         }
     })   
@@ -239,7 +244,7 @@ function Bookshelf(shelfStatus) {
         const allBooks = getBooks(); // All books on this shelf
         const currentBooks = sortShelf(filterShelf(allBooks)); // Filtered and sorted books
 
-        const placeholder = filterTerm !== null
+        const placeholder = filterTerm !== ''
             ? "<td colspan='6'>No books found</td>"
             : status === 'read'
             ? "<td colspan='6'>You haven't marked any books as read</td>"
